@@ -9,17 +9,13 @@ export const revalidate = 0; // Disable caching for MVP real-time feel
 
 export const dynamic = 'force-dynamic';
 
-export default async function Home() {
-  let reports = [];
-  try {
-    reports = await getReports();
-  } catch (error) {
-    console.warn("Build time DB fetch skipped or failed", error);
-  }
+export default function Home() {
+  // We no longer fetch on the server to absolutely prevent Vercel static build crashes.
+  // The client component will handle the data fetching via useActionState or useEffect.
 
   return (
     <main className="h-screen w-full bg-[#f8fafc] overflow-hidden">
-      <DashboardClient initialReports={reports} />
+      <DashboardClient initialReports={[]} />
     </main>
   );
 }
