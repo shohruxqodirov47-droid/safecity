@@ -80,14 +80,14 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
           type="text"
           name="title"
           required
-          className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none text-slate-900 placeholder-slate-400 font-medium text-sm shadow-sm"
+          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none text-black placeholder-slate-700 font-medium text-sm shadow-sm"
           placeholder="Nima sodir bo'ldi?"
         />
 
         <textarea
           name="description"
           required
-          className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none h-20 resize-none text-slate-900 placeholder-slate-400 font-medium text-sm shadow-sm"
+          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none h-20 resize-none text-black placeholder-slate-700 font-medium text-sm shadow-sm"
           placeholder="Batafsil yozing..."
         />
 
@@ -112,7 +112,7 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
                 <ImageIcon size={16} /> Rasm biriktirildi ✓
               </span>
             ) : (
-              <span className="text-slate-400 font-medium flex items-center gap-2 text-xs">
+              <span className="text-slate-700 font-bold flex items-center gap-2 text-xs">
                 <Camera size={16} /> Rasm yuklash (Ixtiyoriy)
               </span>
             )}
@@ -125,7 +125,7 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
             "flex items-center gap-2 text-xs p-3 rounded-xl border transition-all duration-300",
             location
               ? "bg-yellow-50 border-yellow-200 text-yellow-700 font-bold"
-              : "bg-slate-100 border-slate-200 text-slate-500 font-medium"
+              : "bg-slate-100 border-slate-300 text-slate-700 font-bold"
           )}
         >
           <MapPin className="w-3.5 h-3.5" />
@@ -148,7 +148,7 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
           className={cn(
             "w-full py-3.5 px-4 rounded-xl font-black text-sm transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden shadow-sm",
             loading || !location
-              ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
+              ? "bg-slate-200 text-slate-700 cursor-not-allowed border border-slate-300"
               : "bg-yellow-400 text-black hover:bg-yellow-300 hover:shadow-md active:scale-[0.98]"
           )}
         >
