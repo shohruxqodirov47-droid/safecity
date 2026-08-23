@@ -78,7 +78,7 @@ export async function createReport(prevState: any, formData: FormData) {
       description: formData.get("description") as string,
       latitude: parseFloat(formData.get("latitude") as string),
       longitude: parseFloat(formData.get("longitude") as string),
-      image: formData.get("image") as string | undefined,
+      image: (formData.get("image") as string) || undefined,
     };
 
     const validated = ReportSchema.safeParse(data);

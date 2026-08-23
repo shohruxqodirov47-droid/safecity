@@ -21,7 +21,7 @@ const icons = {
   CRITICAL: createCustomIcon("#ef4444", "#fca5a5"),
   HIGH: createCustomIcon("#f97316", "#fdba74"),
   MEDIUM: createCustomIcon("#eab308", "#fde047"),
-  LOW: createCustomIcon("#6b7280", "#9ca3af"),
+  LOW: createCustomIcon("#94a3b8", "#cbd5e1"),
   SELECTED: createCustomIcon("#eab308", "#fde047"),
 };
 
@@ -38,17 +38,17 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
   return (
     <>
       <style>{`
-        .leaflet-container { touch-action: none !important; cursor: crosshair; background: #0a0a0a; }
+        .leaflet-container { touch-action: none !important; cursor: crosshair; background: #f8fafc; }
         .leaflet-container:active { cursor: grabbing; }
         .custom-leaflet-icon { background: none; border: none; }
-        .custom-leaflet-icon svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); transition: transform 0.2s ease; }
+        .custom-leaflet-icon svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); transition: transform 0.2s ease; }
         .custom-leaflet-icon:hover svg { transform: scale(1.15) translateY(-2px); }
-        .leaflet-popup-content-wrapper { border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); padding: 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); background: #111 !important; }
-        .leaflet-popup-content { margin: 0; width: 280px !important; color: white; }
-        .leaflet-popup-tip { background: #111 !important; box-shadow: none; }
-        .leaflet-control-zoom { border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 12px !important; overflow: hidden; }
-        .leaflet-control-zoom a { background: rgba(0,0,0,0.8) !important; color: #eab308 !important; border-color: rgba(255,255,255,0.06) !important; width: 36px !important; height: 36px !important; line-height: 36px !important; font-size: 18px !important; }
-        .leaflet-control-zoom a:hover { background: rgba(234,179,8,0.15) !important; }
+        .leaflet-popup-content-wrapper { border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 0; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); background: #ffffff !important; }
+        .leaflet-popup-content { margin: 0; width: 280px !important; color: #0f172a; }
+        .leaflet-popup-tip { background: #ffffff !important; box-shadow: none; }
+        .leaflet-control-zoom { border: 1px solid rgba(0,0,0,0.1) !important; border-radius: 12px !important; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;}
+        .leaflet-control-zoom a { background: #ffffff !important; color: #0f172a !important; border-color: rgba(0,0,0,0.05) !important; width: 36px !important; height: 36px !important; line-height: 36px !important; font-size: 18px !important; }
+        .leaflet-control-zoom a:hover { background: #f8fafc !important; color: #eab308 !important;}
       `}</style>
 
       <MapContainer
@@ -61,7 +61,7 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
       >
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">Carto</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
 
         <LocationSelector setLocation={onLocationSelect} />
@@ -69,10 +69,10 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
         {selectedLocation && (
           <Marker position={selectedLocation} icon={icons.SELECTED}>
             <Popup>
-              <div className="p-4 text-center bg-[#111]">
-                <MapPin className="mx-auto text-yellow-400 mb-2" />
-                <h3 className="font-bold text-white text-sm">Yangi Hodisa Joyi</h3>
-                <p className="text-[11px] text-white/40 mt-1">Chap paneldagi formani to'ldiring</p>
+              <div className="p-4 text-center bg-white">
+                <MapPin className="mx-auto text-yellow-500 mb-2 w-6 h-6" />
+                <h3 className="font-bold text-slate-900 text-sm">Yangi Hodisa Joyi</h3>
+                <p className="text-[11px] text-slate-500 mt-1">Chap paneldagi formani to'ldiring</p>
               </div>
             </Popup>
           </Marker>
@@ -85,7 +85,7 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
             icon={icons[report.severityLevel as keyof typeof icons] || icons.MEDIUM}
           >
             <Popup>
-              <div className="flex flex-col bg-[#111]">
+              <div className="flex flex-col bg-white">
                 <div
                   className={`h-1 w-full ${
                     report.severityLevel === "CRITICAL"
@@ -94,28 +94,28 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
                       ? "bg-orange-500"
                       : report.severityLevel === "MEDIUM"
                       ? "bg-yellow-400"
-                      : "bg-white/20"
+                      : "bg-slate-300"
                   }`}
                 />
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <AlertCircle
                       className={`w-3.5 h-3.5 ${
-                        report.severityLevel === "CRITICAL" ? "text-red-400" : "text-yellow-400"
+                        report.severityLevel === "CRITICAL" ? "text-red-500" : "text-yellow-500"
                       }`}
                     />
-                    <span className="text-[9px] font-black tracking-wider text-white/40 uppercase">
+                    <span className="text-[9px] font-black tracking-wider text-slate-500 uppercase">
                       {report.severityLevel}
                     </span>
                   </div>
-                  <h3 className="font-bold text-white text-sm leading-tight mb-2">{report.title}</h3>
-                  <p className="text-[11px] text-white/40 mb-3 line-clamp-3">{report.description}</p>
+                  <h3 className="font-bold text-slate-900 text-sm leading-tight mb-2">{report.title}</h3>
+                  <p className="text-[11px] text-slate-600 mb-3 line-clamp-3 leading-relaxed">{report.description}</p>
 
-                  <div className="flex items-center justify-between pt-2.5 border-t border-white/[0.06]">
-                    <span className="text-[10px] font-medium text-white/25 flex items-center gap-1">
+                  <div className="flex items-center justify-between pt-2.5 border-t border-slate-100">
+                    <span className="text-[10px] font-medium text-slate-500 flex items-center gap-1">
                       <Clock className="w-3 h-3" /> {new Date(report.createdAt).toLocaleDateString()}
                     </span>
-                    <span className="text-[9px] font-bold text-yellow-400/60 flex items-center gap-1">
+                    <span className="text-[9px] font-bold text-yellow-600 flex items-center gap-1">
                       <ThumbsUp size={10} /> {report.upvotes || 0}
                     </span>
                   </div>

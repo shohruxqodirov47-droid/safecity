@@ -32,7 +32,7 @@ function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVot
         "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300",
         voted
           ? "bg-yellow-400 text-black border border-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.4)]"
-          : "bg-white/5 text-white/50 border border-white/10 hover:bg-yellow-400/10 hover:text-yellow-400 hover:border-yellow-400/30 active:scale-95"
+          : "bg-slate-100 text-slate-500 border border-slate-200 hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200 active:scale-95"
       )}
     >
       <ThumbsUp size={12} className={voted ? "fill-current" : ""} />
@@ -54,7 +54,7 @@ export default function DashboardView({ initialReports }: { initialReports: any[
   const getPercent = (count: number) => (total > 0 ? Math.round((count / total) * 100) : 0);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black">
+    <div className="relative w-full h-screen overflow-hidden bg-[#f8fafc]">
       {/* Full Screen Map */}
       <div className="absolute inset-0 z-0">
         <MapComponent
@@ -67,7 +67,7 @@ export default function DashboardView({ initialReports }: { initialReports: any[
       {/* Mobile Toggle */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="md:hidden fixed top-4 left-4 z-[1100] bg-black/80 backdrop-blur-md text-yellow-400 p-3 rounded-2xl border border-white/10 shadow-xl"
+        className="md:hidden fixed top-4 left-4 z-[1100] bg-white/90 backdrop-blur-md text-yellow-600 p-3 rounded-2xl border border-slate-200 shadow-xl"
       >
         {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
@@ -90,8 +90,8 @@ export default function DashboardView({ initialReports }: { initialReports: any[
             exit={{ x: -500, opacity: 0 }}
             transition={{ type: "spring", stiffness: 80, damping: 20 }}
             className={cn(
-              "absolute z-[1000] bg-black/90 backdrop-blur-2xl border border-white/[0.08] flex flex-col overflow-hidden",
-              "md:top-3 md:left-3 md:w-[400px] md:h-[calc(100vh-24px)] md:rounded-3xl md:shadow-[0_0_60px_rgba(0,0,0,0.8)]",
+              "absolute z-[1000] bg-white/95 backdrop-blur-2xl border border-slate-200 flex flex-col overflow-hidden shadow-2xl",
+              "md:top-3 md:left-3 md:w-[400px] md:h-[calc(100vh-24px)] md:rounded-3xl",
               "top-0 left-0 w-full h-full rounded-none md:rounded-3xl"
             )}
           >
@@ -106,38 +106,33 @@ export default function DashboardView({ initialReports }: { initialReports: any[
                     </div>
                   </div>
                   <div>
-                    <h1 className="text-xl font-black text-white tracking-tight">Safe<span className="text-yellow-400">City</span> AI</h1>
+                    <h1 className="text-xl font-black text-slate-900 tracking-tight">Safe<span className="text-yellow-500">City</span> AI</h1>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-400"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-500"></span>
                       </span>
-                      <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em]">Tizim faol</p>
+                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">Tizim faol</p>
                     </div>
                   </div>
-                </div>
-                <div className="hidden md:flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                  <div className="w-2 h-2 rounded-full bg-white/20" />
-                  <div className="w-2 h-2 rounded-full bg-white/10" />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 mb-5">
                 <div className="bg-yellow-400 p-3 rounded-2xl flex flex-col overflow-hidden relative">
-                  <Activity className="text-black/30 w-4 h-4 mb-1" />
+                  <Activity className="text-yellow-900/40 w-4 h-4 mb-1" />
                   <span className="text-2xl font-black text-black leading-none">{total}</span>
-                  <span className="text-[8px] font-bold text-black/60 uppercase tracking-wider mt-1">Hodisalar</span>
+                  <span className="text-[8px] font-bold text-yellow-900/60 uppercase tracking-wider mt-1">Hodisalar</span>
                 </div>
-                <div className="bg-white/[0.04] border border-white/[0.06] p-3 rounded-2xl flex flex-col">
-                  <ThumbsUp className="text-yellow-400/50 w-4 h-4 mb-1" />
-                  <span className="text-2xl font-black text-white leading-none">{totalUpvotes}</span>
-                  <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider mt-1">Ovozlar</span>
+                <div className="bg-slate-50 border border-slate-200 p-3 rounded-2xl flex flex-col">
+                  <ThumbsUp className="text-yellow-500 w-4 h-4 mb-1" />
+                  <span className="text-2xl font-black text-slate-900 leading-none">{totalUpvotes}</span>
+                  <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mt-1">Ovozlar</span>
                 </div>
-                <div className="bg-white/[0.04] border border-white/[0.06] p-3 rounded-2xl flex flex-col">
-                  <TrendingUp className="text-yellow-400/50 w-4 h-4 mb-1" />
-                  <span className="text-2xl font-black text-white leading-none">{criticalCount}</span>
-                  <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider mt-1">Kritik</span>
+                <div className="bg-slate-50 border border-slate-200 p-3 rounded-2xl flex flex-col">
+                  <TrendingUp className="text-red-500 w-4 h-4 mb-1" />
+                  <span className="text-2xl font-black text-slate-900 leading-none">{criticalCount}</span>
+                  <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider mt-1">Kritik</span>
                 </div>
               </div>
             </div>
@@ -145,46 +140,46 @@ export default function DashboardView({ initialReports }: { initialReports: any[
             {/* Scroll */}
             <div className="flex-1 overflow-y-auto px-5 pb-20 md:pb-5 custom-scrollbar">
               {/* Analytics */}
-              <div className="mb-5 bg-white/[0.03] border border-white/[0.06] p-4 rounded-2xl">
-                <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
-                  <BarChart3 className="w-3.5 h-3.5 text-yellow-400" /> Xavflilik Analitikasi
+              <div className="mb-5 bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+                  <BarChart3 className="w-3.5 h-3.5 text-yellow-500" /> Xavflilik Analitikasi
                 </h3>
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                      <span className="text-red-400">Critical</span>
-                      <span className="text-white/40">{criticalCount} ({getPercent(criticalCount)}%)</span>
+                      <span className="text-red-500">Critical</span>
+                      <span className="text-slate-500">{criticalCount} ({getPercent(criticalCount)}%)</span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                       <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(criticalCount)}%` }} transition={{ duration: 1.2, delay: 0.1 }} className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full" />
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                      <span className="text-orange-400">High</span>
-                      <span className="text-white/40">{highCount} ({getPercent(highCount)}%)</span>
+                      <span className="text-orange-500">High</span>
+                      <span className="text-slate-500">{highCount} ({getPercent(highCount)}%)</span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                       <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(highCount)}%` }} transition={{ duration: 1.2, delay: 0.2 }} className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full" />
                     </div>
                   </div>
                   <div className="flex gap-3">
                     <div className="flex-1">
                       <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                        <span className="text-yellow-400">Medium</span>
-                        <span className="text-white/40">{getPercent(mediumCount)}%</span>
+                        <span className="text-yellow-500">Medium</span>
+                        <span className="text-slate-500">{getPercent(mediumCount)}%</span>
                       </div>
-                      <div className="w-full h-1 bg-white/[0.05] rounded-full overflow-hidden">
+                      <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
                         <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(mediumCount)}%` }} transition={{ duration: 1.2, delay: 0.3 }} className="h-full bg-yellow-400 rounded-full" />
                       </div>
                     </div>
                     <div className="flex-1">
                       <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                        <span className="text-white/30">Low</span>
-                        <span className="text-white/40">{getPercent(lowCount)}%</span>
+                        <span className="text-slate-400">Low</span>
+                        <span className="text-slate-500">{getPercent(lowCount)}%</span>
                       </div>
-                      <div className="w-full h-1 bg-white/[0.05] rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(lowCount)}%` }} transition={{ duration: 1.2, delay: 0.4 }} className="h-full bg-white/20 rounded-full" />
+                      <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+                        <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(lowCount)}%` }} transition={{ duration: 1.2, delay: 0.4 }} className="h-full bg-slate-300 rounded-full" />
                       </div>
                     </div>
                   </div>
@@ -196,18 +191,18 @@ export default function DashboardView({ initialReports }: { initialReports: any[
               {/* Feed */}
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em] flex items-center gap-2">
-                    <Zap className="w-3.5 h-3.5 text-yellow-400" /> Jonli Lenta
+                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em] flex items-center gap-2">
+                    <Zap className="w-3.5 h-3.5 text-yellow-500" /> Jonli Lenta
                   </h3>
-                  <span className="text-[9px] text-white/20 font-bold">{total} ta xabar</span>
+                  <span className="text-[9px] text-slate-400 font-bold">{total} ta xabar</span>
                 </div>
                 <div className="space-y-2">
                   <AnimatePresence>
                     {initialReports.length === 0 && (
-                      <div className="text-center py-8 border border-dashed border-white/10 rounded-2xl">
-                        <Crosshair className="w-8 h-8 text-white/10 mx-auto mb-2" />
-                        <p className="text-xs text-white/20 font-medium">Hozircha hodisalar yo'q</p>
-                        <p className="text-[10px] text-white/10 mt-1">Xaritadan joy tanlab birinchi hodisani kiriting</p>
+                      <div className="text-center py-8 border border-dashed border-slate-300 rounded-2xl">
+                        <Crosshair className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                        <p className="text-xs text-slate-400 font-medium">Hozircha hodisalar yo'q</p>
+                        <p className="text-[10px] text-slate-300 mt-1">Xaritadan joy tanlab birinchi hodisani kiriting</p>
                       </div>
                     )}
                     {initialReports.map((report: any, i: number) => (
@@ -216,27 +211,27 @@ export default function DashboardView({ initialReports }: { initialReports: any[
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
                         key={report.id}
-                        className="bg-white/[0.03] border border-white/[0.06] p-3.5 rounded-2xl hover:bg-white/[0.06] hover:border-yellow-400/20 transition-all duration-300 group relative"
+                        className="bg-white border border-slate-200 p-3.5 rounded-2xl hover:bg-slate-50 hover:shadow-sm hover:border-yellow-400/30 transition-all duration-300 group relative"
                       >
                         <div className={cn("absolute top-3 left-0 w-0.5 h-[calc(100%-24px)] rounded-full",
                           report.severityLevel === 'CRITICAL' ? 'bg-red-500' :
                           report.severityLevel === 'HIGH' ? 'bg-orange-500' :
-                          report.severityLevel === 'MEDIUM' ? 'bg-yellow-400' : 'bg-white/10'
+                          report.severityLevel === 'MEDIUM' ? 'bg-yellow-400' : 'bg-slate-300'
                         )} />
                         <div className="flex justify-between items-start mb-1 pl-2">
-                          <h4 className="font-bold text-white text-sm leading-tight pr-2 group-hover:text-yellow-400 transition-colors">{report.title}</h4>
+                          <h4 className="font-bold text-slate-900 text-sm leading-tight pr-2 group-hover:text-yellow-600 transition-colors">{report.title}</h4>
                           <span className={cn("text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0",
-                            report.severityLevel === 'CRITICAL' ? 'bg-red-500/20 text-red-400' :
-                            report.severityLevel === 'HIGH' ? 'bg-orange-500/20 text-orange-400' :
-                            report.severityLevel === 'MEDIUM' ? 'bg-yellow-400/20 text-yellow-400' :
-                            'bg-white/10 text-white/40'
+                            report.severityLevel === 'CRITICAL' ? 'bg-red-100 text-red-600' :
+                            report.severityLevel === 'HIGH' ? 'bg-orange-100 text-orange-600' :
+                            report.severityLevel === 'MEDIUM' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-slate-100 text-slate-500'
                           )}>
                             {report.severityLevel}
                           </span>
                         </div>
-                        <p className="text-[11px] text-white/30 line-clamp-2 pl-2 font-medium mb-2.5">{report.description}</p>
-                        <div className="pl-2 flex justify-between items-center pt-2 border-t border-white/[0.04]">
-                          <span className="text-[8px] text-white/15 font-bold uppercase tracking-widest">
+                        <p className="text-[11px] text-slate-600 line-clamp-2 pl-2 font-medium mb-2.5">{report.description}</p>
+                        <div className="pl-2 flex justify-between items-center pt-2 border-t border-slate-100">
+                          <span className="text-[8px] text-slate-400 font-bold uppercase tracking-widest">
                             {new Date(report.createdAt).toLocaleDateString("uz-UZ")}
                           </span>
                           <UpvoteButton reportId={report.id} initialVotes={report.upvotes} />
@@ -248,11 +243,11 @@ export default function DashboardView({ initialReports }: { initialReports: any[
               </div>
             </div>
 
-            <div className="hidden md:flex px-5 py-3 border-t border-white/[0.04] shrink-0 items-center justify-between">
-              <span className="text-[8px] text-white/15 font-bold uppercase tracking-[0.2em]">SafeCity AI v1.0</span>
+            <div className="hidden md:flex px-5 py-3 border-t border-slate-200 shrink-0 items-center justify-between">
+              <span className="text-[8px] text-slate-400 font-bold uppercase tracking-[0.2em]">SafeCity AI v1.0</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-[8px] text-white/15 font-bold">Powered by</span>
-                <span className="text-[8px] text-yellow-400/60 font-black">Gemini AI</span>
+                <span className="text-[8px] text-slate-400 font-bold">Powered by</span>
+                <span className="text-[8px] text-yellow-600 font-black">Gemini AI</span>
               </div>
             </div>
           </motion.aside>
@@ -264,17 +259,17 @@ export default function DashboardView({ initialReports }: { initialReports: any[
           <motion.div
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-            className="w-20 h-20 border-2 border-yellow-400/30 rounded-full flex items-center justify-center relative"
+            className="w-20 h-20 border-2 border-yellow-400/40 rounded-full flex items-center justify-center relative shadow-lg"
           >
-            <Crosshair className="text-yellow-400 w-7 h-7 opacity-60" />
-            <div className="absolute w-full h-[1px] bg-yellow-400/20" />
-            <div className="absolute h-full w-[1px] bg-yellow-400/20" />
+            <Crosshair className="text-yellow-500 w-7 h-7" />
+            <div className="absolute w-full h-[1px] bg-yellow-400/30" />
+            <div className="absolute h-full w-[1px] bg-yellow-400/30" />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-5 bg-black/80 backdrop-blur-md text-yellow-400 px-5 py-2.5 rounded-full shadow-2xl text-xs font-bold border border-yellow-400/20"
+            className="mt-5 bg-white/95 backdrop-blur-md text-slate-900 px-5 py-2.5 rounded-full shadow-xl text-xs font-bold border border-slate-200"
           >
             Xaritadan joyni belgilang
           </motion.div>
