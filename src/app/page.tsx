@@ -7,8 +7,15 @@ const DashboardClient = dynamic(() => import("./DashboardClient"), { ssr: false 
 
 export const revalidate = 0; // Disable caching for MVP real-time feel
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
-  const reports = await getReports();
+  let reports = [];
+  try {
+    reports = await getReports();
+  } catch (error) {
+    console.warn("Build time DB fetch skipped or failed", error);
+  }
 
   return (
     <main className="h-screen w-full bg-[#f8fafc] overflow-hidden">
