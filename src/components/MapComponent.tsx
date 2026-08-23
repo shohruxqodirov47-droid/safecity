@@ -60,8 +60,8 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
         dragging={true}
       >
         <TileLayer
-          attribution='&copy; <a href="https://carto.com/">Carto</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; Google Maps'
+          url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
         />
 
         <LocationSelector setLocation={onLocationSelect} />
