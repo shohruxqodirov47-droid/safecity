@@ -68,8 +68,8 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
           <AlertTriangle className="text-yellow-600 w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-base font-black text-slate-900 tracking-tight">Yangi Hodisa</h2>
-          <p className="text-[10px] font-medium text-slate-500 flex items-center gap-1">
+          <h2 className="text-base font-black text-black tracking-tight">Yangi Hodisa</h2>
+          <p className="text-[10px] font-bold text-black flex items-center gap-1">
             <Sparkles size={10} className="text-yellow-500" /> AI vizual analizator
           </p>
         </div>
@@ -80,14 +80,14 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
           type="text"
           name="title"
           required
-          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none text-black placeholder-slate-700 font-medium text-sm shadow-sm"
+          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none text-black placeholder-black font-bold text-sm shadow-sm"
           placeholder="Nima sodir bo'ldi?"
         />
 
         <textarea
           name="description"
           required
-          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none h-20 resize-none text-black placeholder-slate-700 font-medium text-sm shadow-sm"
+          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none h-20 resize-none text-black placeholder-black font-bold text-sm shadow-sm"
           placeholder="Batafsil yozing..."
         />
 
@@ -104,15 +104,15 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
               "w-full h-14 border border-dashed rounded-xl flex items-center justify-center gap-2 transition-all duration-300",
               imagePreview
                 ? "border-yellow-400 bg-yellow-50"
-                : "border-slate-300 bg-white group-hover:border-yellow-400/50 group-hover:bg-yellow-50/50"
+                : "border-slate-400 bg-white group-hover:border-yellow-400/50 group-hover:bg-yellow-50/50"
             )}
           >
             {imagePreview ? (
-              <span className="text-yellow-600 font-bold flex items-center gap-2 text-xs">
+              <span className="text-black font-bold flex items-center gap-2 text-xs">
                 <ImageIcon size={16} /> Rasm biriktirildi ✓
               </span>
             ) : (
-              <span className="text-slate-700 font-bold flex items-center gap-2 text-xs">
+              <span className="text-black font-bold flex items-center gap-2 text-xs">
                 <Camera size={16} /> Rasm yuklash (Ixtiyoriy)
               </span>
             )}
@@ -124,8 +124,8 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
           className={cn(
             "flex items-center gap-2 text-xs p-3 rounded-xl border transition-all duration-300",
             location
-              ? "bg-yellow-50 border-yellow-200 text-yellow-700 font-bold"
-              : "bg-slate-100 border-slate-300 text-slate-700 font-bold"
+              ? "bg-yellow-50 border-yellow-400 text-black font-bold"
+              : "bg-slate-100 border-slate-300 text-black font-bold"
           )}
         >
           <MapPin className="w-3.5 h-3.5" />
