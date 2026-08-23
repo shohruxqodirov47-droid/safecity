@@ -5,11 +5,12 @@ import { AnimatePresence } from "framer-motion";
 import LandingPage from "@/components/LandingPage";
 import SplashScreen from "@/components/SplashScreen";
 import DashboardView from "@/components/DashboardView";
+import AuthPage from "@/components/AuthPage";
 
 export default function DashboardClient({ initialReports }: { initialReports: any[] }) {
   const [reports, setReports] = useState<any[]>(initialReports);
   const [showSplash, setShowSplash] = useState(false);
-  const [currentView, setCurrentView] = useState<"landing" | "dashboard">("landing");
+  const [currentView, setCurrentView] = useState<"landing" | "auth" | "dashboard">("landing");
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -24,7 +25,16 @@ export default function DashboardClient({ initialReports }: { initialReports: an
     fetchReports();
   }, []);
 
-  const handleEnter = useCallback(() => {
+  const handleLandingEnter = useCallback(() => {
+    const user = localStorage.getItem("safecity_user");
+    if (user) {
+      setShowSplash(true);
+    } else {
+      setCurrentView("auth");
+    }
+  }, []);
+
+  const handleAuthComplete = useCallback(() => {
     setShowSplash(true);
   }, []);
 
@@ -39,9 +49,15 @@ export default function DashboardClient({ initialReports }: { initialReports: an
         {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       </AnimatePresence>
 
-      {currentView === "landing" ? (
-        <LandingPage onEnter={handleEnter} />
-      ) : (
+      {currentView === "landing" && !showSplash && (
+        <LandingPage onEnter={handleLandingEnter} />
+      )}
+      
+      {currentView === "auth" && !showSplash && (
+        <AuthPage onComplete={handleAuthComplete} />
+      )}
+      
+      {currentView === "dashboard" && (
         <DashboardView initialReports={reports} />
       )}
     </div>

@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import dynamic from "next/dynamic";
 import ReportForm from "@/components/ReportForm";
-import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu } from "lucide-react";
+import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { upvoteReport } from "@/actions/report.actions";
@@ -230,11 +230,21 @@ export default function DashboardView({ initialReports }: { initialReports: any[
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-600 line-clamp-2 pl-2 font-medium mb-2.5">{report.description}</p>
-                        <div className="pl-2 flex justify-between items-center pt-2 border-t border-slate-100">
+                        <div className="pl-2 flex justify-between items-center pt-2 border-t border-slate-100 mt-2">
                           <span className="text-[8px] text-slate-400 font-bold uppercase tracking-widest">
                             {new Date(report.createdAt).toLocaleDateString("uz-UZ")}
                           </span>
-                          <UpvoteButton reportId={report.id} initialVotes={report.upvotes} />
+                          <div className="flex gap-2">
+                            <a
+                              href={`https://t.me/share/url?url=https://safecityuz.vercel.app&text=Diqqat! ${encodeURIComponent(report.title)} - SafeCity AI tizimiga xabar berildi.`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300 bg-[#eff6ff] text-[#3b82f6] border border-[#bfdbfe] hover:bg-[#dbeafe] active:scale-95"
+                            >
+                              <Send size={12} className="mr-0.5" /> Ulashish
+                            </a>
+                            <UpvoteButton reportId={report.id} initialVotes={report.upvotes} />
+                          </div>
                         </div>
                       </motion.div>
                     ))}

@@ -42,6 +42,13 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
     formData.append("longitude", location[1].toString());
     if (imagePreview) formData.append("image", imagePreview);
 
+    const userStr = localStorage.getItem("safecity_user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      const oldDesc = formData.get("description") as string;
+      formData.set("description", `${oldDesc}\n\n👤 Yuboruvchi: ${user.name} (${user.phone})`);
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setAiScanning(false);
 
