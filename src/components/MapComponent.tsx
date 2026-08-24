@@ -128,7 +128,7 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
                 if (e.originalEvent) {
                   e.originalEvent.stopPropagation();
                 }
-                if (onMarkerClick) onMarkerClick(report.id);
+                if (onMarkerClick) onMarkerClick(report.id, report.latitude, report.longitude);
               }
             }}
           >

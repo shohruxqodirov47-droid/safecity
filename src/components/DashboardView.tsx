@@ -63,8 +63,9 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
           onLocationSelect={(loc: [number, number]) => { setSelectedLocation(loc); setSidebarOpen(true); }}
           selectedLocation={selectedLocation}
           focusLocation={focusLocation}
-          onMarkerClick={(id: string) => {
+          onMarkerClick={(id: string, lat: number, lng: number) => {
             setSelectedLocation(null); // Formani yopish
+            setFocusLocation([lat, lng]); // Xaritani shu markazga olib borish
             const el = document.getElementById(`report-${id}`);
             if (el) {
               setSidebarOpen(true);
