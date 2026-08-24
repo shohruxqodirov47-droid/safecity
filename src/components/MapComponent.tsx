@@ -40,7 +40,7 @@ function MapFlyTo({ location }: { location: [number, number] | null }) {
   const map = useMap();
   useEffect(() => {
     if (location) {
-      map.flyTo(location, 16, { duration: 1.5 });
+      map.flyTo(location, 18, { duration: 1.5 });
     }
   }, [location, map]);
   return null;
