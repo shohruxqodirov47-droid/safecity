@@ -109,7 +109,7 @@ export async function createReport(prevState: any, formData: FormData) {
   }
 }
 
-export async function getReports() {
+export async function getReports(timestamp?: number) {
   return await prisma.report.findMany({
     orderBy: { createdAt: 'desc' },
     take: 100

@@ -43,6 +43,7 @@ function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVot
 
 export default function DashboardView({ initialReports, onRefresh }: { initialReports: any[], onRefresh?: () => void }) {
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
+  const [focusLocation, setFocusLocation] = useState<[number, number] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const total = initialReports.length;
@@ -61,6 +62,16 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
           reports={initialReports}
           onLocationSelect={(loc: [number, number]) => { setSelectedLocation(loc); setSidebarOpen(true); }}
           selectedLocation={selectedLocation}
+          focusLocation={focusLocation}
+          onMarkerClick={(id: string) => {
+            const el = document.getElementById(`report-${id}`);
+            if (el) {
+              setSidebarOpen(true);
+              el.scrollIntoView({ behavior: "smooth", block: "center" });
+              el.classList.add("ring-2", "ring-yellow-400", "ring-offset-2");
+              setTimeout(() => el.classList.remove("ring-2", "ring-yellow-400", "ring-offset-2"), 2000);
+            }
+          }}
         />
       </div>
 
@@ -210,11 +221,13 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                     )}
                     {initialReports.map((report: any, i: number) => (
                       <motion.div
+                        id={`report-${report.id}`}
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
                         key={report.id}
-                        className="bg-white border border-slate-200 p-3.5 rounded-2xl hover:bg-slate-50 hover:shadow-sm hover:border-yellow-400/30 transition-all duration-300 group relative"
+                        onClick={() => setFocusLocation([report.latitude, report.longitude])}
+                        className="bg-white border border-slate-200 p-3.5 rounded-2xl hover:bg-slate-50 hover:shadow-sm hover:border-yellow-400/30 transition-all duration-300 group relative cursor-pointer"
                       >
                         <div className={cn("absolute top-3 left-0 w-0.5 h-[calc(100%-24px)] rounded-full",
                           report.severityLevel === 'CRITICAL' ? 'bg-red-500' :

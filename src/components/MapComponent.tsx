@@ -25,12 +25,24 @@ const icons = {
   SELECTED: createCustomIcon("#eab308", "#fde047"),
 };
 
+import { useEffect } from "react";
+
 function LocationSelector({ setLocation }: { setLocation: (loc: [number, number]) => void }) {
   useMapEvents({
     click(e) {
       setLocation([e.latlng.lat, e.latlng.lng]);
     },
   });
+  return null;
+}
+
+function MapFlyTo({ location }: { location: [number, number] | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (location) {
+      map.flyTo(location, 16, { duration: 1.5 });
+    }
+  }, [location, map]);
   return null;
 }
 
@@ -60,7 +72,7 @@ function LocateUser({ setLocation }: { setLocation: (loc: [number, number]) => v
   );
 }
 
-export default function MapComponent({ reports, onLocationSelect, selectedLocation }: any) {
+export default function MapComponent({ reports, onLocationSelect, selectedLocation, onMarkerClick, focusLocation }: any) {
   return (
     <>
       <style>{`
@@ -92,6 +104,7 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
 
         <LocationSelector setLocation={onLocationSelect} />
         <LocateUser setLocation={onLocationSelect} />
+        <MapFlyTo location={focusLocation} />
 
         {selectedLocation && (
           <Marker position={selectedLocation} icon={icons.SELECTED}>
@@ -110,6 +123,11 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
             key={report.id}
             position={[report.latitude, report.longitude]}
             icon={icons[report.severityLevel as keyof typeof icons] || icons.MEDIUM}
+            eventHandlers={{
+              click: (e) => {
+                if (onMarkerClick) onMarkerClick(report.id);
+              }
+            }}
           >
             <Popup>
               <div className="flex flex-col bg-white">

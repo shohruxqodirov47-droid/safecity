@@ -15,7 +15,7 @@ export default function DashboardClient({ initialReports }: { initialReports: an
   const fetchReports = useCallback(async () => {
     try {
       const { getReports } = await import("@/actions/report.actions");
-      const data = await getReports();
+      const data = await getReports(Date.now());
       setReports(data);
     } catch (error) {
       console.error("Failed to load reports:", error);
