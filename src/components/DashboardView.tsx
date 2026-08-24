@@ -247,6 +247,11 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                             {report.severityLevel}
                           </span>
                         </div>
+                        {report.imageUrl && (
+                          <div className="ml-2 w-[calc(100%-8px)] h-28 mb-2 rounded-xl overflow-hidden border border-slate-100">
+                            <img src={report.imageUrl} alt={report.title} className="w-full h-full object-cover" />
+                          </div>
+                        )}
                         <p className="text-[11px] text-slate-600 line-clamp-2 pl-2 font-medium mb-2.5">{report.description}</p>
                         <div className="pl-2 flex justify-between items-center pt-2 border-t border-slate-100 mt-2">
                           <span className="text-[8px] text-slate-400 font-bold uppercase tracking-widest">

@@ -157,6 +157,11 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
                     </span>
                   </div>
                   <h3 className="font-bold text-slate-900 text-sm leading-tight mb-2">{report.title}</h3>
+                  {report.imageUrl && (
+                    <div className="w-full h-24 mb-3 rounded-lg overflow-hidden border border-slate-200">
+                      <img src={report.imageUrl} alt={report.title} className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <p className="text-[11px] text-slate-600 mb-3 line-clamp-3 leading-relaxed">{report.description}</p>
 
                   <div className="flex items-center justify-between pt-2.5 border-t border-slate-100">
