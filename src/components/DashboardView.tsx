@@ -64,6 +64,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
           selectedLocation={selectedLocation}
           focusLocation={focusLocation}
           onMarkerClick={(id: string) => {
+            setSelectedLocation(null); // Formani yopish
             const el = document.getElementById(`report-${id}`);
             if (el) {
               setSidebarOpen(true);

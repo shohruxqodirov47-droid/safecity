@@ -125,6 +125,9 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
             icon={icons[report.severityLevel as keyof typeof icons] || icons.MEDIUM}
             eventHandlers={{
               click: (e) => {
+                if (e.originalEvent) {
+                  e.originalEvent.stopPropagation();
+                }
                 if (onMarkerClick) onMarkerClick(report.id);
               }
             }}
