@@ -1,8 +1,8 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
-import { AlertCircle, Clock, MapPin, ThumbsUp } from "lucide-react";
+import { AlertCircle, Clock, MapPin, ThumbsUp, Navigation } from "lucide-react";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -32,6 +32,32 @@ function LocationSelector({ setLocation }: { setLocation: (loc: [number, number]
     },
   });
   return null;
+}
+
+function LocateUser({ setLocation }: { setLocation: (loc: [number, number]) => void }) {
+  const map = useMap();
+
+  const handleLocate = () => {
+    map.locate().on("locationfound", function (e) {
+      setLocation([e.latlng.lat, e.latlng.lng]);
+      map.flyTo(e.latlng, 16, { duration: 1.5 });
+    });
+  };
+
+  return (
+    <div className="absolute top-[80px] right-[10px] z-[1000]">
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          handleLocate();
+        }}
+        className="w-[36px] h-[36px] bg-white rounded-xl shadow-md border border-black/10 flex items-center justify-center text-slate-700 hover:text-yellow-600 hover:bg-slate-50 transition-all"
+        title="Mening joylashuvim"
+      >
+        <Navigation className="w-[18px] h-[18px]" />
+      </button>
+    </div>
+  );
 }
 
 export default function MapComponent({ reports, onLocationSelect, selectedLocation }: any) {
@@ -65,6 +91,7 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
         />
 
         <LocationSelector setLocation={onLocationSelect} />
+        <LocateUser setLocation={onLocationSelect} />
 
         {selectedLocation && (
           <Marker position={selectedLocation} icon={icons.SELECTED}>
