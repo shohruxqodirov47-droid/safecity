@@ -41,7 +41,7 @@ function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVot
   );
 }
 
-export default function DashboardView({ initialReports }: { initialReports: any[] }) {
+export default function DashboardView({ initialReports, onRefresh }: { initialReports: any[], onRefresh?: () => void }) {
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -186,7 +186,10 @@ export default function DashboardView({ initialReports }: { initialReports: any[
                 </div>
               </div>
 
-              <ReportForm location={selectedLocation} onSuccess={() => setSelectedLocation(null)} />
+              <ReportForm location={selectedLocation} onSuccess={() => {
+                setSelectedLocation(null);
+                if (onRefresh) onRefresh();
+              }} />
 
               {/* Feed */}
               <div className="mt-6">

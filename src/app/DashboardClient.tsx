@@ -12,18 +12,19 @@ export default function DashboardClient({ initialReports }: { initialReports: an
   const [showSplash, setShowSplash] = useState(false);
   const [currentView, setCurrentView] = useState<"landing" | "auth" | "dashboard">("landing");
 
-  useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const { getReports } = await import("@/actions/report.actions");
-        const data = await getReports();
-        setReports(data);
-      } catch (error) {
-        console.error("Failed to load reports:", error);
-      }
-    };
-    fetchReports();
+  const fetchReports = useCallback(async () => {
+    try {
+      const { getReports } = await import("@/actions/report.actions");
+      const data = await getReports();
+      setReports(data);
+    } catch (error) {
+      console.error("Failed to load reports:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
   const handleLandingEnter = useCallback(() => {
     const user = localStorage.getItem("safecity_user");
@@ -58,7 +59,7 @@ export default function DashboardClient({ initialReports }: { initialReports: an
       )}
       
       {currentView === "dashboard" && (
-        <DashboardView initialReports={reports} />
+        <DashboardView initialReports={reports} onRefresh={fetchReports} />
       )}
     </div>
   );
