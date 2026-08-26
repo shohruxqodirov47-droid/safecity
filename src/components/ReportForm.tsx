@@ -18,6 +18,7 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
         setError("Rasm hajmi 2MB dan oshmasligi kerak!");
+        e.target.value = '';
         return;
       }
       setError("");
@@ -44,24 +45,32 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
 
     const userStr = localStorage.getItem("safecity_user");
     if (userStr) {
-      const user = JSON.parse(userStr);
-      const oldDesc = formData.get("description") as string;
-      formData.set("description", `${oldDesc}\n\n👤 Yuboruvchi: ${user.name} (${user.phone})`);
+      try {
+        const user = JSON.parse(userStr);
+        const oldDesc = formData.get("description") as string;
+        formData.set("description", `${oldDesc}\n\n👤 Yuboruvchi: ${user.name} (${user.phone})`);
+      } catch (err) {
+        // continue without user info
+      }
     }
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    setAiScanning(false);
 
-    const res = await createReport(null, formData);
+    try {
+      const res = await createReport(null, formData);
 
-    if (res.error) {
-      setError(res.error);
+      if (res.error) {
+        setError(res.error);
+      } else {
+        formRef.current?.reset();
+        setImagePreview(null);
+        onSuccess();
+      }
+    } catch (err) {
+      setError("Xatolik yuz berdi, qayta urinib ko'ring");
+    } finally {
       setLoading(false);
-    } else {
-      formRef.current?.reset();
-      setImagePreview(null);
-      setLoading(false);
-      onSuccess();
+      setAiScanning(false);
     }
   };
 

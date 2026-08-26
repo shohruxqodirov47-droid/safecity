@@ -5,16 +5,16 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 
 const ReportSchema = z.object({
-  title: z.string().min(3, "Sarlavha kamida 3 ta harfdan iborat bo'lishi kerak").max(100),
-  description: z.string().min(10, "Batafsil ma'lumot kiriting (min 10 ta harf)"),
-  latitude: z.number(),
-  longitude: z.number(),
+  title: z.string().trim().min(3, "Sarlavha kamida 3 ta harfdan iborat bo'lishi kerak").max(100),
+  description: z.string().trim().min(10, "Batafsil ma'lumot kiriting (min 10 ta harf)").max(3000),
+  latitude: z.number().finite(),
+  longitude: z.number().finite(),
   image: z.string().optional(),
 });
 
 // Fallback "dummy" AI if Gemini key is missing
 function fallbackSeverity(text: string) {
-  const t = text.toLowerCase();
+  const t = text.toLowerCase().replace(/[`ʻ'''\u2018\u2019\u02BB\u0060]/g, "'");
   if (t.includes("jinoyat") || t.includes("yong'in") || t.includes("qotillik") || t.includes("xavf") || t.includes("avariya")) return "CRITICAL";
   if (t.includes("janjal") || t.includes("quduq") || t.includes("kabel")) return "HIGH";
   if (t.includes("yoritkich") || t.includes("itlar") || t.includes("chuqur") || t.includes("svet")) return "MEDIUM";
@@ -43,18 +43,27 @@ async function analyzeWithGemini(title: string, description: string, base64Image
     // If an image was uploaded, attach it to the Gemini prompt
     if (base64Image) {
       // Clean the base64 string (e.g. "data:image/jpeg;base64,...")
-      const mimeType = base64Image.split(';')[0].split(':')[1];
-      const base64Data = base64Image.split(',')[1];
-      parts.push({
-        inline_data: { mime_type: mimeType, data: base64Data }
-      });
+      const match = base64Image.match(/^data:([^;]+);base64,(.+)$/);
+      if (match) {
+        const mimeType = match[1];
+        const base64Data = match[2];
+        parts.push({
+          inline_data: { mime_type: mimeType, data: base64Data }
+        });
+      }
     }
 
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ contents: [{ parts }] }),
+      signal: AbortSignal.timeout(15000),
     });
+
+    if (!res.ok) {
+      console.error("Gemini API Error:", res.status, res.statusText);
+      return fallbackSeverity(title + " " + description);
+    }
 
     const data = await res.json();
     const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text?.toUpperCase() || "";
@@ -109,11 +118,16 @@ export async function createReport(prevState: any, formData: FormData) {
   }
 }
 
-export async function getReports(timestamp?: number) {
-  return await prisma.report.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 100
-  });
+export async function getReports() {
+  try {
+    return await prisma.report.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 100
+    });
+  } catch (error) {
+    console.error("Failed to get reports:", error);
+    return [];
+  }
 }
 
 export async function upvoteReport(id: string) {
@@ -126,6 +140,6 @@ export async function upvoteReport(id: string) {
     return { success: true };
   } catch (error) {
     console.error("Failed to upvote:", error);
-    return { error: "Xatolik yuz berdi" };
+    return { error: "Ovoz berishda xatolik yuz berdi. Iltimos qayta urinib ko'ring." };
   }
 }

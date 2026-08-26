@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
 import { AlertCircle, Clock, MapPin, ThumbsUp, Navigation } from "lucide-react";
+import { useEffect } from "react";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -25,7 +26,6 @@ const icons = {
   SELECTED: createCustomIcon("#eab308", "#fde047"),
 };
 
-import { useEffect } from "react";
 
 function LocationSelector({ setLocation }: { setLocation: (loc: [number, number]) => void }) {
   useMapEvents({
@@ -50,10 +50,10 @@ function LocateUser({ setLocation }: { setLocation: (loc: [number, number]) => v
   const map = useMap();
 
   const handleLocate = () => {
-    map.locate().on("locationfound", function (e) {
+    map.locate().once("locationfound", function (e) {
       setLocation([e.latlng.lat, e.latlng.lng]);
       map.flyTo(e.latlng, 16, { duration: 1.5 });
-    });
+    }).once("locationerror", () => { alert("Joylashuvni aniqlab bo'lmadi. GPS ruxsatini tekshiring."); });
   };
 
   return (
@@ -118,7 +118,9 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
           </Marker>
         )}
 
-        {reports.map((report: any) => (
+        {reports.map((report: any) => {
+          if (typeof report.latitude !== 'number' || typeof report.longitude !== 'number' || isNaN(report.latitude) || isNaN(report.longitude)) return null;
+          return (
           <Marker
             key={report.id}
             position={[report.latitude, report.longitude]}
@@ -176,7 +178,8 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
               </div>
             </Popup>
           </Marker>
-        ))}
+          );
+        })}
       </MapContainer>
     </>
   );

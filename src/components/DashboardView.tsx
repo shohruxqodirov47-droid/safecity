@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import dynamic from "next/dynamic";
 import ReportForm from "@/components/ReportForm";
 import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send } from "lucide-react";
@@ -15,12 +15,19 @@ function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVot
   const [votes, setVotes] = useState(initialVotes || 0);
   const [voted, setVoted] = useState(false);
 
+  useEffect(() => { setVotes(initialVotes || 0); }, [initialVotes]);
+
   const handleVote = () => {
     if (voted) return;
     setVotes((v) => v + 1);
     setVoted(true);
     startTransition(async () => {
-      await upvoteReport(reportId);
+      try {
+        await upvoteReport(reportId);
+      } catch (err) {
+        setVotes(v => v - 1);
+        setVoted(false);
+      }
     });
   };
 
@@ -263,10 +270,13 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300 bg-[#eff6ff] text-[#3b82f6] border border-[#bfdbfe] hover:bg-[#dbeafe] active:scale-95"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <Send size={12} className="mr-0.5" /> Ulashish
                             </a>
-                            <UpvoteButton reportId={report.id} initialVotes={report.upvotes} />
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <UpvoteButton reportId={report.id} initialVotes={report.upvotes} />
+                            </div>
                           </div>
                         </div>
                       </motion.div>
