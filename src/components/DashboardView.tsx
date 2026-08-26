@@ -3,12 +3,55 @@
 import { useState, useTransition, useEffect } from "react";
 import dynamic from "next/dynamic";
 import ReportForm from "@/components/ReportForm";
-import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send } from "lucide-react";
+import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { upvoteReport } from "@/actions/report.actions";
+import { auth, signOut } from "@/lib/firebase";
 
 const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
+
+function UserProfileWidget() {
+  const [user, setUser] = useState<{name: string, email: string, photo: string | null} | null>(null);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("safecity_user");
+    if (userStr) {
+      try { setUser(JSON.parse(userStr)); } catch (e) {}
+    }
+  }, []);
+
+  if (!user) return null;
+
+  return (
+    <div className="absolute top-4 right-4 z-[1100] bg-white/90 backdrop-blur-md border border-slate-200 rounded-2xl p-2 shadow-xl flex items-center gap-3 pr-4">
+      <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
+        {user.photo ? (
+          <img src={user.photo} alt={user.name} className="w-full h-full object-cover" />
+        ) : (
+          <UserIcon className="w-5 h-5 text-slate-400" />
+        )}
+      </div>
+      <div className="flex flex-col max-w-[120px] hidden sm:flex">
+        <span className="text-xs font-bold text-slate-900 truncate">{user.name || "Foydalanuvchi"}</span>
+        <span className="text-[9px] font-medium text-slate-500 truncate">{user.email || user.phone}</span>
+      </div>
+      <button 
+        onClick={async () => {
+          try {
+            await signOut(auth);
+            localStorage.removeItem("safecity_user");
+            window.location.reload();
+          } catch(e) {}
+        }}
+        className="ml-2 bg-red-50 text-red-600 p-2 rounded-xl hover:bg-red-100 transition-colors"
+        title="Chiqish"
+      >
+        <LogOut size={16} />
+      </button>
+    </div>
+  );
+}
 
 function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVotes: number }) {
   const [isPending, startTransition] = useTransition();
@@ -63,6 +106,10 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#f8fafc]">
+      
+      {/* User Profile Floating Widget */}
+      <UserProfileWidget />
+
       {/* Full Screen Map */}
       <div className="absolute inset-0 z-0">
         <MapComponent

@@ -27,16 +27,6 @@ export default function DashboardClient({ initialReports }: { initialReports: an
   }, [fetchReports]);
 
   const handleLandingEnter = useCallback(async () => {
-    try {
-      const { getSession } = await import("next-auth/react");
-      const session = await getSession();
-      if (session?.user) {
-        localStorage.setItem("safecity_user", JSON.stringify({ name: session.user.name, phone: session.user.email }));
-        setShowSplash(true);
-        return;
-      }
-    } catch (e) {}
-
     const user = localStorage.getItem("safecity_user");
     if (user) {
       setShowSplash(true);
