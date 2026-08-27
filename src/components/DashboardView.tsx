@@ -292,11 +292,11 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                         )} />
                         <div className="flex justify-between items-start mb-1 pl-2">
                           <h4 className="font-bold text-slate-900 text-sm leading-tight pr-2 group-hover:text-yellow-600 transition-colors">{report.title}</h4>
-                          <span className={cn("text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0",
-                            report.severityLevel === 'CRITICAL' ? 'bg-red-100 text-red-600' :
-                            report.severityLevel === 'HIGH' ? 'bg-orange-100 text-orange-600' :
-                            report.severityLevel === 'MEDIUM' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-slate-100 text-slate-500'
+                          <span className={cn("text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 border",
+                            report.severityLevel === 'CRITICAL' ? 'bg-red-500 text-white border-red-600 shadow-sm' :
+                            report.severityLevel === 'HIGH' ? 'bg-orange-500 text-white border-orange-600 shadow-sm' :
+                            report.severityLevel === 'MEDIUM' ? 'bg-yellow-400 text-black border-yellow-500 shadow-sm' :
+                            'bg-slate-500 text-white border-slate-600 shadow-sm'
                           )}>
                             {report.severityLevel}
                           </span>
