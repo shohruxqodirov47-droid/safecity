@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/client": "^5.10.2",
     "clsx": "^2.1.1",
+    "firebase": "^10.13.0",
     "framer-motion": "^11.18.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.344.0",
