@@ -86,7 +86,7 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
         <div>
           <h2 className="text-base font-black text-black tracking-tight">Yangi Hodisa</h2>
           <p className="text-[10px] font-bold text-black flex items-center gap-1">
-            <Sparkles size={10} className="text-yellow-500" /> AI vizual analizator
+            Xavflilikni o'zingiz belgilang
           </p>
         </div>
       </div>
@@ -106,6 +106,17 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
           className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none h-20 resize-none text-black placeholder-black font-bold text-sm shadow-sm"
           placeholder="Batafsil yozing..."
         />
+
+        <select
+          name="severityLevel"
+          required
+          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all outline-none text-black font-bold text-sm shadow-sm"
+        >
+          <option value="LOW">LOW (Past) - Chiroq, mayda muammo</option>
+          <option value="MEDIUM">MEDIUM (O'rta) - Ochiq quduq, xavf</option>
+          <option value="HIGH">HIGH (Yuqori) - Janjal, ochiq sim</option>
+          <option value="CRITICAL">CRITICAL (Kritik) - Yong'in, avariya</option>
+        </select>
 
         {/* Image Upload */}
         <div className="relative group">

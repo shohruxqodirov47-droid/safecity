@@ -333,12 +333,20 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
               </div>
             </div>
 
-            <div className="hidden md:flex px-5 py-3 border-t border-slate-200 shrink-0 items-center justify-between">
-              <span className="text-[8px] text-slate-400 font-bold uppercase tracking-[0.2em]">SafeCity AI v1.0</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[8px] text-slate-400 font-bold">Powered by</span>
-                <span className="text-[8px] text-yellow-600 font-black">Gemini AI</span>
-              </div>
+            <div className="flex px-5 py-3 border-t border-slate-200 shrink-0 items-center justify-between bg-slate-50">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.1em]">SafeCity v1.0</span>
+              <button 
+                onClick={async () => {
+                  try {
+                    await signOut(auth);
+                    localStorage.removeItem("safecity_user");
+                    window.location.reload();
+                  } catch(e) {}
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl text-[10px] font-black transition-colors"
+              >
+                <LogOut size={12} /> Tizimdan chiqish
+              </button>
             </div>
           </motion.aside>
         )}

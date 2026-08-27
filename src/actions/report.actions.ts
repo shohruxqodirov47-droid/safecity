@@ -10,6 +10,7 @@ const ReportSchema = z.object({
   latitude: z.number().finite(),
   longitude: z.number().finite(),
   image: z.string().optional(),
+  severityLevel: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]),
 });
 
 // Fallback "dummy" AI if Gemini key is missing
@@ -88,6 +89,7 @@ export async function createReport(prevState: any, formData: FormData) {
       latitude: parseFloat(formData.get("latitude") as string),
       longitude: parseFloat(formData.get("longitude") as string),
       image: (formData.get("image") as string) || undefined,
+      severityLevel: formData.get("severityLevel") as string,
     };
 
     const validated = ReportSchema.safeParse(data);
@@ -95,8 +97,8 @@ export async function createReport(prevState: any, formData: FormData) {
       return { error: validated.error.errors[0].message };
     }
 
-    // Call Gemini 1.5 Flash to analyze text AND image
-    const severityLevel = await analyzeWithGemini(validated.data.title, validated.data.description, validated.data.image);
+    // AI is disabled by user request, using manual selection
+    const severityLevel = validated.data.severityLevel;
 
     await prisma.report.create({
       data: {
