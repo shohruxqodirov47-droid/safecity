@@ -2,7 +2,7 @@ import { initializeApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCNrXWZxddeTl6ZAMQmh2LwzkEQwtdW48A",
+  apiKey: "AIzaSyCNrXWZxddeTl6ZAMQMh2LwzkEQwtdW48A",
   authDomain: "safecity-d16ee.firebaseapp.com",
   projectId: "safecity-d16ee",
   storageBucket: "safecity-d16ee.firebasestorage.app",
