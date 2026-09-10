@@ -6,6 +6,15 @@ import { AlertTriangle, Send, MapPin, Camera, Image as ImageIcon, Loader2 } from
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
+const CATEGORY_OPTIONS = [
+  { value: "YOL", label: "🚗 Yo'l muammosi", emoji: "🚗" },
+  { value: "CHIROQ", label: "💡 Chiroq / Yoritish", emoji: "💡" },
+  { value: "QUVUR", label: "🚰 Quvur / Suv", emoji: "🚰" },
+  { value: "XAVFSIZLIK", label: "🛡️ Xavfsizlik", emoji: "🛡️" },
+  { value: "IFLOSLIK", label: "🗑️ Ifloslik / Axlat", emoji: "🗑️" },
+  { value: "BOSHQA", label: "📌 Boshqa", emoji: "📌" },
+];
+
 export default function ReportForm({ location, onSuccess }: { location: [number, number] | null; onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -81,7 +90,7 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
         <div>
           <h2 className="text-base font-black text-black tracking-tight">Yangi Hodisa</h2>
           <p className="text-[10px] font-bold text-slate-500 flex items-center gap-1">
-            Xavflilikni o'zingiz belgilang
+            Muammoni kiriting va xaritadan joyni belgilang
           </p>
         </div>
       </div>
@@ -102,19 +111,36 @@ export default function ReportForm({ location, onSuccess }: { location: [number,
           placeholder="Batafsil yozing..."
         />
 
+        {/* Category */}
+        <div>
+          <label className="block text-xs font-black text-blue-600 uppercase tracking-wider mb-1.5 ml-1">
+            📂 Kategoriya:
+          </label>
+          <select
+            name="category"
+            required
+            className="w-full px-4 py-3 bg-blue-50 border-2 border-blue-300 rounded-xl focus:ring-4 focus:ring-blue-300/30 focus:border-blue-500 transition-all outline-none text-blue-900 font-black text-sm shadow-sm cursor-pointer"
+          >
+            {CATEGORY_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Severity */}
         <div>
           <label className="block text-xs font-black text-red-500 uppercase tracking-wider mb-1.5 ml-1">
-            ⚠️ Xavf darajasini tanlang:
+            ⚠️ Xavf darajasi:
           </label>
           <select
             name="severityLevel"
             required
-            className="w-full px-4 py-3.5 bg-red-50 border-2 border-red-400 rounded-xl focus:ring-4 focus:ring-red-400/30 focus:border-red-500 transition-all outline-none text-red-900 font-black text-sm shadow-md cursor-pointer"
+            className="w-full px-4 py-3 bg-red-50 border-2 border-red-400 rounded-xl focus:ring-4 focus:ring-red-400/30 focus:border-red-500 transition-all outline-none text-red-900 font-black text-sm shadow-sm cursor-pointer"
           >
-            <option value="LOW">🟢 Past (LOW) — Chiroq, mayda muammo</option>
-            <option value="MEDIUM">🟡 O'rta (MEDIUM) — Ochiq quduq, xavf</option>
-            <option value="HIGH">🟠 Yuqori (HIGH) — Janjal, ochiq sim</option>
-            <option value="CRITICAL">🔴 Kritik (CRITICAL) — Yong'in, avariya</option>
+            <option value="LOW">🟢 Past (LOW)</option>
+            <option value="MEDIUM">🟡 O'rta (MEDIUM)</option>
+            <option value="HIGH">🟠 Yuqori (HIGH)</option>
+            <option value="CRITICAL">🔴 Kritik (CRITICAL)</option>
           </select>
         </div>
 

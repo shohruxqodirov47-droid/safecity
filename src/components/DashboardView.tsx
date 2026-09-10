@@ -3,13 +3,28 @@
 import { useState, useTransition, useEffect } from "react";
 import dynamic from "next/dynamic";
 import ReportForm from "@/components/ReportForm";
-import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon } from "lucide-react";
+import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon, Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { upvoteReport } from "@/actions/report.actions";
 import { auth, signOut } from "@/lib/firebase";
 
 const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
+
+const CATEGORY_MAP: Record<string, { label: string; emoji: string; color: string }> = {
+  YOL: { label: "Yo'l", emoji: "🚗", color: "bg-amber-100 text-amber-700 border-amber-200" },
+  CHIROQ: { label: "Chiroq", emoji: "💡", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  QUVUR: { label: "Quvur", emoji: "🚰", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  XAVFSIZLIK: { label: "Xavfsizlik", emoji: "🛡️", color: "bg-red-100 text-red-700 border-red-200" },
+  IFLOSLIK: { label: "Ifloslik", emoji: "🗑️", color: "bg-green-100 text-green-700 border-green-200" },
+  BOSHQA: { label: "Boshqa", emoji: "📌", color: "bg-slate-100 text-slate-600 border-slate-200" },
+};
+
+const STATUS_MAP: Record<string, { label: string; color: string; dot: string }> = {
+  PENDING: { label: "Kutilmoqda", color: "text-orange-500", dot: "bg-orange-400" },
+  IN_PROGRESS: { label: "Jarayonda", color: "text-blue-500", dot: "bg-blue-400" },
+  RESOLVED: { label: "Hal qilindi ✓", color: "text-green-600", dot: "bg-green-500" },
+};
 
 function UserProfileWidget() {
   const [user, setUser] = useState<{name: string, email?: string, phone?: string, photo: string | null} | null>(null);
@@ -38,9 +53,7 @@ function UserProfileWidget() {
       </div>
       <button 
         onClick={async () => {
-          try {
-            await signOut(auth);
-          } catch(e) {}
+          try { await signOut(auth); } catch(e) {}
           localStorage.removeItem("safecity_user");
           window.location.reload();
         }}
@@ -99,22 +112,21 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
   const [focusLocation, setFocusLocation] = useState<[number, number] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeFilter, setActiveFilter] = useState<string>("ALL");
+
+  const filteredReports = activeFilter === "ALL" 
+    ? initialReports 
+    : initialReports.filter(r => r.category === activeFilter);
 
   const total = initialReports.length;
   const criticalCount = initialReports.filter((r) => r.severityLevel === "CRITICAL").length;
-  const highCount = initialReports.filter((r) => r.severityLevel === "HIGH").length;
-  const mediumCount = initialReports.filter((r) => r.severityLevel === "MEDIUM").length;
-  const lowCount = initialReports.filter((r) => r.severityLevel === "LOW").length;
   const totalUpvotes = initialReports.reduce((sum: number, r: any) => sum + (r.upvotes || 0), 0);
-  const getPercent = (count: number) => (total > 0 ? Math.round((count / total) * 100) : 0);
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#f8fafc]">
       
-      {/* User Profile Floating Widget */}
       <UserProfileWidget />
 
-      {/* Full Screen Map */}
       <div className="absolute inset-0 z-0">
         <MapComponent
           reports={initialReports}
@@ -137,7 +149,6 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
         />
       </div>
 
-      {/* Mobile Toggle */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="md:hidden fixed top-4 left-4 z-[1100] bg-white/90 backdrop-blur-md text-yellow-600 p-3 rounded-2xl border border-slate-200 shadow-xl"
@@ -154,7 +165,6 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
         </button>
       )}
 
-      {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.aside
@@ -168,7 +178,6 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
               "top-0 left-0 w-full h-full rounded-none md:rounded-3xl"
             )}
           >
-            {/* Header */}
             <div className="p-5 pb-0 pt-16 md:pt-5 shrink-0">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
@@ -210,78 +219,72 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
               </div>
             </div>
 
-            {/* Scroll */}
             <div className="flex-1 overflow-y-auto px-5 pb-20 md:pb-5 custom-scrollbar">
-              {/* Analytics */}
-              <div className="mb-5 bg-slate-50 border border-slate-200 p-4 rounded-2xl">
-                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
-                  <BarChart3 className="w-3.5 h-3.5 text-yellow-500" /> Xavflilik Analitikasi
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                      <span className="text-red-500">Kritik</span>
-                      <span className="text-slate-500">{criticalCount} ({getPercent(criticalCount)}%)</span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                      <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(criticalCount)}%` }} transition={{ duration: 1.2, delay: 0.1 }} className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                      <span className="text-orange-500">Yuqori</span>
-                      <span className="text-slate-500">{highCount} ({getPercent(highCount)}%)</span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                      <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(highCount)}%` }} transition={{ duration: 1.2, delay: 0.2 }} className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full" />
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="flex-1">
-                      <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                        <span className="text-yellow-500">O'rta</span>
-                        <span className="text-slate-500">{getPercent(mediumCount)}%</span>
-                      </div>
-                      <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(mediumCount)}%` }} transition={{ duration: 1.2, delay: 0.3 }} className="h-full bg-yellow-400 rounded-full" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                        <span className="text-slate-400">Past</span>
-                        <span className="text-slate-500">{getPercent(lowCount)}%</span>
-                      </div>
-                      <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${getPercent(lowCount)}%` }} transition={{ duration: 1.2, delay: 0.4 }} className="h-full bg-slate-300 rounded-full" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <ReportForm location={selectedLocation} onSuccess={() => {
                 setSelectedLocation(null);
                 if (onRefresh) onRefresh();
               }} />
 
+              {/* Category Filter */}
+              <div className="mt-5 mb-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <Filter className="w-3.5 h-3.5 text-yellow-500" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em]">Filtrlash</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setActiveFilter("ALL")}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-[10px] font-black border transition-all",
+                      activeFilter === "ALL"
+                        ? "bg-yellow-400 text-black border-yellow-500"
+                        : "bg-white text-slate-500 border-slate-200 hover:border-yellow-300"
+                    )}
+                  >
+                    Hammasi ({total})
+                  </button>
+                  {Object.entries(CATEGORY_MAP).map(([key, cat]) => {
+                    const count = initialReports.filter(r => r.category === key).length;
+                    if (count === 0) return null;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => setActiveFilter(activeFilter === key ? "ALL" : key)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-full text-[10px] font-black border transition-all",
+                          activeFilter === key
+                            ? "bg-yellow-400 text-black border-yellow-500"
+                            : "bg-white text-slate-500 border-slate-200 hover:border-yellow-300"
+                        )}
+                      >
+                        {cat.emoji} {cat.label} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Feed */}
-              <div className="mt-6">
+              <div className="mt-3">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.15em] flex items-center gap-2">
                     <Zap className="w-3.5 h-3.5 text-yellow-500" /> Jonli Lenta
                   </h3>
-                  <span className="text-[9px] text-slate-400 font-bold">{total} ta xabar</span>
+                  <span className="text-[9px] text-slate-400 font-bold">{filteredReports.length} ta xabar</span>
                 </div>
                 <div className="space-y-2">
                   <AnimatePresence>
-                    {initialReports.length === 0 && (
+                    {filteredReports.length === 0 && (
                       <div className="text-center py-8 border border-dashed border-slate-300 rounded-2xl">
                         <Crosshair className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                         <p className="text-xs text-slate-400 font-medium">Hozircha hodisalar yo'q</p>
                         <p className="text-[10px] text-slate-300 mt-1">Xaritadan joy tanlab birinchi hodisani kiriting</p>
                       </div>
                     )}
-                    {initialReports.map((report: any, i: number) => (
+                    {filteredReports.map((report: any, i: number) => {
+                      const cat = CATEGORY_MAP[report.category] || CATEGORY_MAP.BOSHQA;
+                      const status = STATUS_MAP[report.status] || STATUS_MAP.PENDING;
+                      return (
                       <motion.div
                         id={`report-${report.id}`}
                         initial={{ opacity: 0, y: 8 }}
@@ -296,7 +299,9 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                           report.severityLevel === 'HIGH' ? 'bg-orange-500' :
                           report.severityLevel === 'MEDIUM' ? 'bg-yellow-400' : 'bg-slate-300'
                         )} />
-                        <div className="flex justify-between items-start mb-1 pl-2">
+
+                        {/* Title + Severity */}
+                        <div className="flex justify-between items-start mb-1.5 pl-2">
                           <h4 className="font-bold text-slate-900 text-sm leading-tight pr-2 group-hover:text-yellow-600 transition-colors">{report.title}</h4>
                           <span className={cn("text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 border",
                             report.severityLevel === 'CRITICAL' ? 'bg-red-500 text-white border-red-600 shadow-sm' :
@@ -307,6 +312,18 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                             {report.severityLevel}
                           </span>
                         </div>
+
+                        {/* Category + Status badges */}
+                        <div className="flex items-center gap-2 pl-2 mb-2">
+                          <span className={cn("text-[9px] font-bold px-2 py-0.5 rounded-full border", cat.color)}>
+                            {cat.emoji} {cat.label}
+                          </span>
+                          <span className={cn("text-[9px] font-bold flex items-center gap-1", status.color)}>
+                            <span className={cn("w-1.5 h-1.5 rounded-full", status.dot)} />
+                            {status.label}
+                          </span>
+                        </div>
+
                         {report.imageUrl && (
                           <div className="ml-2 w-[calc(100%-8px)] h-28 mb-2 rounded-xl overflow-hidden border border-slate-100">
                             <img src={report.imageUrl} alt={report.title} className="w-full h-full object-cover" />
@@ -319,7 +336,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                           </span>
                           <div className="flex gap-2">
                             <a
-                              href={`https://t.me/share/url?url=https://safecityuz.vercel.app&text=Diqqat! ${encodeURIComponent(report.title)} - SafeCity AI tizimiga xabar berildi.`}
+                              href={`https://t.me/share/url?url=https://safecityuz.vercel.app&text=Diqqat! ${encodeURIComponent(report.title)} - SafeCity tizimiga xabar berildi.`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300 bg-[#eff6ff] text-[#3b82f6] border border-[#bfdbfe] hover:bg-[#dbeafe] active:scale-95"
@@ -333,7 +350,8 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                           </div>
                         </div>
                       </motion.div>
-                    ))}
+                      );
+                    })}
                   </AnimatePresence>
                 </div>
               </div>
@@ -343,9 +361,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.1em]">SafeCity v1.0</span>
               <button 
                 onClick={async () => {
-                  try {
-                    await signOut(auth);
-                  } catch(e) {}
+                  try { await signOut(auth); } catch(e) {}
                   localStorage.removeItem("safecity_user");
                   window.location.reload();
                 }}

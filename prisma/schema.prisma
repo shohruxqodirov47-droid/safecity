@@ -13,6 +13,7 @@ model Report {
   id            String   @id @default(uuid())
   title         String
   description   String
+  category      String   @default("BOSHQA") // "YOL", "CHIROQ", "QUVUR", "XAVFSIZLIK", "IFLOSLIK", "BOSHQA"
   latitude      Float
   longitude     Float
   severityLevel String   // "CRITICAL", "HIGH", "MEDIUM", "LOW"
@@ -23,4 +24,5 @@ model Report {
   updatedAt     DateTime @updatedAt
 
   @@index([status, severityLevel])
+  @@index([category])
 }
