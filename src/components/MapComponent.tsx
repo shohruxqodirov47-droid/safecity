@@ -3,7 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
 import { AlertCircle, Clock, MapPin, ThumbsUp, Navigation } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -25,7 +25,6 @@ const icons = {
   LOW: createCustomIcon("#94a3b8", "#cbd5e1"),
   SELECTED: createCustomIcon("#eab308", "#fde047"),
 };
-
 
 function LocationSelector({ setLocation }: { setLocation: (loc: [number, number]) => void }) {
   useMapEvents({
@@ -49,18 +48,19 @@ function MapFlyTo({ location }: { location: [number, number] | null }) {
 function LocateUser({ setLocation }: { setLocation: (loc: [number, number]) => void }) {
   const map = useMap();
 
-  const handleLocate = () => {
+  const handleLocate = useCallback(() => {
     map.locate().once("locationfound", function (e) {
       setLocation([e.latlng.lat, e.latlng.lng]);
       map.flyTo(e.latlng, 16, { duration: 1.5 });
     }).once("locationerror", () => { alert("Joylashuvni aniqlab bo'lmadi. GPS ruxsatini tekshiring."); });
-  };
+  }, [map, setLocation]);
 
   return (
     <div className="absolute top-[80px] right-[10px] z-[1000]">
       <button
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           handleLocate();
         }}
         className="w-[36px] h-[36px] bg-white rounded-xl shadow-md border border-black/10 flex items-center justify-center text-slate-700 hover:text-yellow-600 hover:bg-slate-50 transition-all"
@@ -151,7 +151,8 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
                   <div className="flex items-center gap-2 mb-2">
                     <AlertCircle
                       className={`w-3.5 h-3.5 ${
-                        report.severityLevel === "CRITICAL" ? "text-red-500" : "text-yellow-500"
+                        report.severityLevel === "CRITICAL" ? "text-red-500" :
+                        report.severityLevel === "HIGH" ? "text-orange-500" : "text-yellow-500"
                       }`}
                     />
                     <span className="text-[9px] font-black tracking-wider text-slate-500 uppercase">
@@ -168,7 +169,7 @@ export default function MapComponent({ reports, onLocationSelect, selectedLocati
 
                   <div className="flex items-center justify-between pt-2.5 border-t border-slate-100">
                     <span className="text-[10px] font-medium text-slate-500 flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> {new Date(report.createdAt).toLocaleDateString()}
+                      <Clock className="w-3 h-3" /> {new Date(report.createdAt).toLocaleDateString("uz-UZ")}
                     </span>
                     <span className="text-[9px] font-bold text-yellow-600 flex items-center gap-1">
                       <ThumbsUp size={10} /> {report.upvotes || 0}

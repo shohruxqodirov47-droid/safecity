@@ -26,6 +26,19 @@ export default function DashboardClient({ initialReports }: { initialReports: an
     fetchReports();
   }, [fetchReports]);
 
+  // Auto-login: if user is already logged in, skip landing and auth
+  useEffect(() => {
+    const user = localStorage.getItem("safecity_user");
+    if (user) {
+      try {
+        JSON.parse(user); // validate it's valid JSON
+        setCurrentView("dashboard");
+      } catch (e) {
+        localStorage.removeItem("safecity_user");
+      }
+    }
+  }, []);
+
   const handleLandingEnter = useCallback(async () => {
     const user = localStorage.getItem("safecity_user");
     if (user) {

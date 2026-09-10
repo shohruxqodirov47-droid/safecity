@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldAlert, Zap, Brain, Users, MapPin, ArrowRight, ChevronDown, Eye, Shield, Sparkles, Globe, BarChart3, Camera } from "lucide-react";
+import { ShieldAlert, Zap, Brain, Users, MapPin, ArrowRight, ChevronDown, Eye, Shield, Globe, BarChart3, Camera } from "lucide-react";
 
 export default function LandingPage({ onEnter }: { onEnter: () => void }) {
   return (
@@ -44,7 +44,7 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             transition={{ delay: 0.3 }}
             className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 text-yellow-600 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-8"
           >
-            <Sparkles size={14} /> Gemini AI bilan ishlovchi
+            <Shield size={14} /> Fuqarolar xavfsizlik tizimi
           </motion.div>
 
           {/* Main heading */}
@@ -68,7 +68,7 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             transition={{ delay: 0.55 }}
             className="text-base md:text-lg text-black/40 font-medium max-w-xl mx-auto mb-10 leading-relaxed"
           >
-            Sun'iy intellekt yordamida shahar muammolarini aniqlang, xabar bering va jamoatchilik nazoratini amalga oshiring.
+            Shahar muammolarini aniqlang, xabar bering va jamoatchilik nazoratini amalga oshiring.
             <span className="text-yellow-600 font-bold"> Birgalikda xavfsiz shahar quramiz.</span>
           </motion.p>
 
@@ -101,8 +101,8 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             className="flex items-center justify-center gap-8 mt-16"
           >
             <div className="text-center">
-              <div className="text-2xl font-black text-yellow-500">AI</div>
-              <div className="text-[9px] text-black/25 font-bold uppercase tracking-wider mt-1">Gemini Vision</div>
+              <div className="text-2xl font-black text-yellow-500">🗺️</div>
+              <div className="text-[9px] text-black/25 font-bold uppercase tracking-wider mt-1">Interaktiv xarita</div>
             </div>
             <div className="w-px h-8 bg-black/[0.08]" />
             <div className="text-center">
@@ -111,8 +111,8 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             </div>
             <div className="w-px h-8 bg-black/[0.08]" />
             <div className="text-center">
-              <div className="text-2xl font-black text-black">0.5s</div>
-              <div className="text-[9px] text-black/25 font-bold uppercase tracking-wider mt-1">AI javob vaqti</div>
+              <div className="text-2xl font-black text-black">🔒</div>
+              <div className="text-[9px] text-black/25 font-bold uppercase tracking-wider mt-1">Xavfsiz tizim</div>
             </div>
           </motion.div>
         </div>
@@ -146,7 +146,7 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             {[
               { icon: MapPin, step: "01", title: "Joyni belgilang", desc: "Xaritadan muammoli joyni bir marta bosib tanlang" },
               { icon: Camera, step: "02", title: "Rasm va ma'lumot", desc: "Muammo haqida yozing va dalil sifatida rasm yuklang" },
-              { icon: Brain, step: "03", title: "AI tahlil qiladi", desc: "Gemini AI rasmni ko'rib, xavflilik darajasini aniqlaydi" },
+              { icon: Brain, step: "03", title: "Xavf darajasini tanlang", desc: "Muammoning jiddiyligini o'zingiz belgilang va yuboring" },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -187,12 +187,12 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
 
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              { icon: Brain, title: "Gemini AI Vision", desc: "Yuklangan rasmni sun'iy intellekt ko'zi bilan tahlil qiladi va xavflilik darajasini avtomatik aniqlaydi", tag: "AI" },
-              { icon: Globe, title: "Cloud Infrastructure", desc: "Supabase PostgreSQL bulutli bazasi. Ma'lumotlar 100% xavfsiz va butun dunyo bo'ylab tezkor ishlaydi", tag: "CLOUD" },
-              { icon: Users, title: "Jamoatchilik Nazorati", desc: "Fuqarolar muammolarni tasdiqlaydi (Upvote). Eng ko'p ovoz olgan muammo avtomatik prioritetga chiqadi", tag: "SOCIAL" },
-              { icon: BarChart3, title: "Real-time Analitika", desc: "Barcha hodisalar real vaqtda statistik tahlil qilinadi. CRITICAL, HIGH, MEDIUM, LOW darajalari ko'rsatiladi", tag: "DATA" },
-              { icon: Eye, title: "PWA Texnologiyasi", desc: "Sayt telefon ekraniga ilova sifatida o'rnatiladi. Internet yo'q bo'lganda ham ishlaydi", tag: "MOBILE" },
-              { icon: Zap, title: "Tezkor Javob", desc: "Hodisa kiritilishi bilan 0.5 soniya ichida AI javob qaytaradi. Hech qanday kutish yo'q", tag: "FAST" },
+              { icon: MapPin, title: "Interaktiv Xarita", desc: "Google xaritasi asosida shaharning barcha joylarini aniq ko'ring va muammolarni belgilang", tag: "XARITA" },
+              { icon: Globe, title: "Bulutli Infratuzilma", desc: "Supabase PostgreSQL bulutli bazasi. Ma'lumotlar 100% xavfsiz va butun dunyo bo'ylab tezkor ishlaydi", tag: "CLOUD" },
+              { icon: Users, title: "Jamoatchilik Nazorati", desc: "Fuqarolar muammolarni tasdiqlaydi (Ovoz berish). Eng ko'p ovoz olgan muammo prioritetga chiqadi", tag: "IJTIMOIY" },
+              { icon: BarChart3, title: "Real-time Analitika", desc: "Barcha hodisalar real vaqtda statistik tahlil qilinadi. Kritik, Yuqori, O'rta, Past darajalari", tag: "TAHLIL" },
+              { icon: Eye, title: "PWA Texnologiyasi", desc: "Sayt telefon ekraniga ilova sifatida o'rnatiladi. Har qanday qurilmada ishlaydi", tag: "MOBIL" },
+              { icon: Zap, title: "Tezkor Javob", desc: "Hodisa kiritilishi bilan bir zumda saqlanadi. Hech qanday kutish yo'q", tag: "TEZKOR" },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -252,10 +252,10 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             <div className="bg-yellow-400 p-1 rounded-lg text-black">
               <ShieldAlert size={14} strokeWidth={2.5} />
             </div>
-            <span className="text-sm font-black text-white/40">Safe<span className="text-yellow-400/60">City</span> AI</span>
+            <span className="text-sm font-black text-white/40">Safe<span className="text-yellow-400/60">City</span></span>
           </div>
           <p className="text-[10px] text-white/20 font-medium text-center">
-            © 2026 SafeCity AI. Barcha huquqlar himoyalangan. Gemini AI texnologiyasi asosida.
+            © 2026 SafeCity. Barcha huquqlar himoyalangan.
           </p>
           <span className="text-[10px] text-white/15 font-bold uppercase tracking-widest">v1.0.0</span>
         </div>

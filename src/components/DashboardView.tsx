@@ -12,7 +12,7 @@ import { auth, signOut } from "@/lib/firebase";
 const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
 
 function UserProfileWidget() {
-  const [user, setUser] = useState<{name: string, email: string, photo: string | null} | null>(null);
+  const [user, setUser] = useState<{name: string, email?: string, phone?: string, photo: string | null} | null>(null);
 
   useEffect(() => {
     const userStr = localStorage.getItem("safecity_user");
@@ -27,22 +27,22 @@ function UserProfileWidget() {
     <div className="absolute top-4 right-4 z-[1100] bg-white/90 backdrop-blur-md border border-slate-200 rounded-2xl p-2 shadow-xl flex items-center gap-3 pr-4">
       <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
         {user.photo ? (
-          <img src={user.photo} alt={user.name} className="w-full h-full object-cover" />
+          <img src={user.photo} alt={user.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
         ) : (
           <UserIcon className="w-5 h-5 text-slate-400" />
         )}
       </div>
-      <div className="flex flex-col max-w-[120px] hidden sm:flex">
+      <div className="flex-col max-w-[120px] hidden sm:flex">
         <span className="text-xs font-bold text-slate-900 truncate">{user.name || "Foydalanuvchi"}</span>
-        <span className="text-[9px] font-medium text-slate-500 truncate">{user.email || user.phone}</span>
+        <span className="text-[9px] font-medium text-slate-500 truncate">{user.email || user.phone || ""}</span>
       </div>
       <button 
         onClick={async () => {
           try {
             await signOut(auth);
-            localStorage.removeItem("safecity_user");
-            window.location.reload();
           } catch(e) {}
+          localStorage.removeItem("safecity_user");
+          window.location.reload();
         }}
         className="ml-2 bg-red-50 text-red-600 p-2 rounded-xl hover:bg-red-100 transition-colors"
         title="Chiqish"
@@ -66,7 +66,11 @@ function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVot
     setVoted(true);
     startTransition(async () => {
       try {
-        await upvoteReport(reportId);
+        const res = await upvoteReport(reportId);
+        if (res.error) {
+          setVotes(v => v - 1);
+          setVoted(false);
+        }
       } catch (err) {
         setVotes(v => v - 1);
         setVoted(false);
@@ -118,14 +122,16 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
           selectedLocation={selectedLocation}
           focusLocation={focusLocation}
           onMarkerClick={(id: string, lat: number, lng: number) => {
-            setSelectedLocation(null); // Formani yopish
-            setFocusLocation([lat, lng]); // Xaritani shu markazga olib borish
+            setSelectedLocation(null);
+            setFocusLocation([lat, lng]);
             const el = document.getElementById(`report-${id}`);
             if (el) {
               setSidebarOpen(true);
-              el.scrollIntoView({ behavior: "smooth", block: "center" });
-              el.classList.add("ring-2", "ring-yellow-400", "ring-offset-2");
-              setTimeout(() => el.classList.remove("ring-2", "ring-yellow-400", "ring-offset-2"), 2000);
+              setTimeout(() => {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                el.classList.add("ring-2", "ring-yellow-400", "ring-offset-2");
+                setTimeout(() => el.classList.remove("ring-2", "ring-yellow-400", "ring-offset-2"), 2000);
+              }, 300);
             }
           }}
         />
@@ -214,7 +220,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                      <span className="text-red-500">Critical</span>
+                      <span className="text-red-500">Kritik</span>
                       <span className="text-slate-500">{criticalCount} ({getPercent(criticalCount)}%)</span>
                     </div>
                     <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
@@ -223,7 +229,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                   </div>
                   <div>
                     <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                      <span className="text-orange-500">High</span>
+                      <span className="text-orange-500">Yuqori</span>
                       <span className="text-slate-500">{highCount} ({getPercent(highCount)}%)</span>
                     </div>
                     <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
@@ -233,7 +239,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                   <div className="flex gap-3">
                     <div className="flex-1">
                       <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                        <span className="text-yellow-500">Medium</span>
+                        <span className="text-yellow-500">O'rta</span>
                         <span className="text-slate-500">{getPercent(mediumCount)}%</span>
                       </div>
                       <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
@@ -242,7 +248,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                     </div>
                     <div className="flex-1">
                       <div className="flex justify-between text-[9px] font-black mb-1 uppercase tracking-wider">
-                        <span className="text-slate-400">Low</span>
+                        <span className="text-slate-400">Past</span>
                         <span className="text-slate-500">{getPercent(lowCount)}%</span>
                       </div>
                       <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
@@ -339,9 +345,9 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                 onClick={async () => {
                   try {
                     await signOut(auth);
-                    localStorage.removeItem("safecity_user");
-                    window.location.reload();
                   } catch(e) {}
+                  localStorage.removeItem("safecity_user");
+                  window.location.reload();
                 }}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl text-[10px] font-black transition-colors"
               >

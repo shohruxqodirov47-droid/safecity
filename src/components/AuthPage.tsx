@@ -13,10 +13,16 @@ export default function AuthPage({ onComplete }: { onComplete: () => void }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.length < 3 || phone.length < 9) return;
+    if (name.trim().length < 3) {
+      setError("Ism kamida 3 ta harfdan iborat bo'lishi kerak");
+      return;
+    }
+    if (phone.trim().length < 9) {
+      setError("Telefon raqamni to'liq kiriting");
+      return;
+    }
     
-    // Save to local storage
-    localStorage.setItem("safecity_user", JSON.stringify({ name, phone }));
+    localStorage.setItem("safecity_user", JSON.stringify({ name: name.trim(), phone: phone.trim(), photo: null }));
     onComplete();
   };
 
@@ -27,9 +33,8 @@ export default function AuthPage({ onComplete }: { onComplete: () => void }) {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
-      // Save Firebase user info to local storage
       localStorage.setItem("safecity_user", JSON.stringify({ 
-        name: user.displayName, 
+        name: user.displayName || "Foydalanuvchi", 
         email: user.email,
         photo: user.photoURL 
       }));
@@ -37,7 +42,13 @@ export default function AuthPage({ onComplete }: { onComplete: () => void }) {
       onComplete();
     } catch (err: any) {
       console.error("Firebase Login Error:", err);
-      setError(err.message || "Tizimga kirishda xatolik yuz berdi");
+      if (err.code === "auth/popup-closed-by-user") {
+        setError("Kirish bekor qilindi");
+      } else if (err.code === "auth/network-request-failed") {
+        setError("Internet aloqasi yo'q. Qayta urinib ko'ring");
+      } else {
+        setError("Tizimga kirishda xatolik yuz berdi. Qayta urinib ko'ring");
+      }
     } finally {
       setLoading(false);
     }
@@ -88,7 +99,7 @@ export default function AuthPage({ onComplete }: { onComplete: () => void }) {
                 type="text"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); setError(""); }}
                 className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all outline-none text-slate-900 placeholder-slate-400 font-medium text-sm"
                 placeholder="Alisher Rustamov"
               />
@@ -107,7 +118,7 @@ export default function AuthPage({ onComplete }: { onComplete: () => void }) {
                 type="tel"
                 required
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => { setPhone(e.target.value); setError(""); }}
                 className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all outline-none text-slate-900 placeholder-slate-400 font-medium text-sm"
                 placeholder="+998 90 123 45 67"
               />
