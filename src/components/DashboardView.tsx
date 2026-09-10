@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import ReportForm from "@/components/ReportForm";
 import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon, Filter, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -108,12 +109,23 @@ function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVot
 }
 
 export default function DashboardView({ initialReports, onRefresh }: { initialReports: any[], onRefresh?: () => void }) {
+  const router = useRouter();
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
   const [focusLocation, setFocusLocation] = useState<[number, number] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDeleting, startDeleting] = useTransition();
+  const [secretClicks, setSecretClicks] = useState(0);
+
+  const handleSecretClick = () => {
+    if (secretClicks + 1 >= 2) {
+      router.push("/admin");
+    } else {
+      setSecretClicks(prev => prev + 1);
+      setTimeout(() => setSecretClicks(0), 3000);
+    }
+  };
 
   useEffect(() => {
     const userStr = localStorage.getItem("safecity_user");
@@ -203,7 +215,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
             <div className="p-5 pb-0 pt-16 md:pt-5 shrink-0">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
-                  <div className="relative">
+                  <div className="relative cursor-pointer transition-transform active:scale-95" onClick={handleSecretClick} title="B2G">
                     <div className="absolute inset-0 bg-yellow-400 blur-xl opacity-30 rounded-full" />
                     <div className="relative bg-yellow-400 p-2.5 rounded-2xl text-black">
                       <ShieldAlert className="w-6 h-6" strokeWidth={2.5} />
