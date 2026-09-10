@@ -1,15 +1,28 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ShieldAlert, User, Phone, ArrowRight, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { auth, googleProvider, signInWithPopup } from "@/lib/firebase";
 
 export default function AuthPage({ onComplete }: { onComplete: () => void }) {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [secretClicks, setSecretClicks] = useState(0);
+
+  const handleSecretClick = () => {
+    if (secretClicks + 1 >= 5) {
+      router.push("/admin");
+    } else {
+      setSecretClicks(prev => prev + 1);
+      // Reset clicks after 3 seconds if they don't click fast enough
+      setTimeout(() => setSecretClicks(0), 3000);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +79,9 @@ export default function AuthPage({ onComplete }: { onComplete: () => void }) {
         className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 shadow-xl relative z-10"
       >
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="relative mb-4">
+          <div className="relative mb-4 cursor-pointer" onClick={handleSecretClick} title="B2G">
             <div className="absolute inset-0 bg-yellow-400 blur-xl opacity-30 rounded-full" />
-            <div className="relative bg-yellow-400 p-4 rounded-2xl text-black">
+            <div className="relative bg-yellow-400 p-4 rounded-2xl text-black transition-transform active:scale-95">
               <ShieldAlert className="w-8 h-8" strokeWidth={2.5} />
             </div>
           </div>
