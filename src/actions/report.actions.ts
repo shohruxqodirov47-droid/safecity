@@ -82,3 +82,18 @@ export async function upvoteReport(id: string) {
     return { error: "Ovoz berishda xatolik yuz berdi. Iltimos qayta urinib ko'ring." };
   }
 }
+
+export async function updateReportStatus(id: string, status: string) {
+  try {
+    await prisma.report.update({
+      where: { id },
+      data: { status }
+    });
+    revalidatePath("/");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update status:", error);
+    return { error: "Statusni o'zgartirishda xatolik yuz berdi." };
+  }
+}
