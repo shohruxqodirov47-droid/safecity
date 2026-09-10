@@ -28,7 +28,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="uz">
+    <html lang="uz" translate="no">
+      <head>
+        <meta name="google" content="notranslate" />
+      </head>
       <body className="bg-gray-50 text-gray-900">{children}</body>
     </html>
   );

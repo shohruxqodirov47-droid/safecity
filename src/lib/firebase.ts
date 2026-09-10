@@ -14,6 +14,7 @@ const firebaseConfig = {
 // Initialize Firebase only if it hasn't been initialized yet
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
+auth.languageCode = 'uz'; // Google oyna o'zbek tilida chiqishi uchun
 const googleProvider = new GoogleAuthProvider();
 
 export { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged };
