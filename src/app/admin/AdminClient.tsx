@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { ShieldAlert, LayoutDashboard, Zap, Droplets, Car, Trash2, Shield, Lock, Search, Filter, CheckCircle2, AlertCircle, Clock } from "lucide-react";
+import { ShieldAlert, LayoutDashboard, Zap, Droplets, Car, Trash2, Shield, Lock, Search, Filter, CheckCircle2, AlertCircle, Clock, Key } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { updateReportStatus } from "@/actions/report.actions";
+import { updateReportStatus, makeAdmin } from "@/actions/report.actions";
 import { motion } from "framer-motion";
 
 const DEPARTMENTS = [
@@ -19,9 +19,36 @@ export default function AdminClient({ initialReports }: { initialReports: any[] 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [adminCode, setAdminCode] = useState("");
+  const [adminMsg, setAdminMsg] = useState("");
   
   const [activeDept, setActiveDept] = useState("ALL");
   const [isPending, startTransition] = useTransition();
+
+  const handleMakeAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (adminCode !== "admin444") {
+      setAdminMsg("Noto'g'ri kod!");
+      return;
+    }
+    const userStr = localStorage.getItem("safecity_user");
+    if (!userStr) {
+      setAdminMsg("Tizimga kirmagansiz!");
+      return;
+    }
+    try {
+      const user = JSON.parse(userStr);
+      if (!user.email) {
+        setAdminMsg("Google orqali kirmagansiz!");
+        return;
+      }
+      const res = await makeAdmin(user.email);
+      if (res.error) setAdminMsg(res.error);
+      else setAdminMsg("Tabriklaymiz! Siz Super Adminsiz.");
+    } catch {
+      setAdminMsg("Xatolik yuz berdi");
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,7 +142,28 @@ export default function AdminClient({ initialReports }: { initialReports: any[] 
           })}
         </div>
 
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800 space-y-4">
+          <form onSubmit={handleMakeAdmin} className="bg-slate-800 p-3 rounded-xl border border-slate-700">
+            <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Super Admin Huquqi</p>
+            <div className="flex gap-2">
+              <input 
+                type="password"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                placeholder="Kod..."
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-yellow-400"
+              />
+              <button type="submit" className="bg-yellow-400 text-black px-3 py-1.5 rounded-lg text-xs font-black hover:bg-yellow-300">
+                <Key size={14} />
+              </button>
+            </div>
+            {adminMsg && (
+              <p className={cn("text-[10px] font-bold mt-2", adminMsg.includes("Tabrik") ? "text-green-400" : "text-red-400")}>
+                {adminMsg}
+              </p>
+            )}
+          </form>
+
           <button onClick={() => setIsAuthenticated(false)} className="w-full py-2.5 text-sm font-bold text-slate-400 hover:text-white bg-slate-800 rounded-lg">
             Chiqish
           </button>

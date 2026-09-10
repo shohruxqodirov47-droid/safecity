@@ -15,7 +15,7 @@ export default function AuthPage({ onComplete }: { onComplete: () => void }) {
   const [secretClicks, setSecretClicks] = useState(0);
 
   const handleSecretClick = () => {
-    if (secretClicks + 1 >= 5) {
+    if (secretClicks + 1 >= 2) {
       router.push("/admin");
     } else {
       setSecretClicks(prev => prev + 1);

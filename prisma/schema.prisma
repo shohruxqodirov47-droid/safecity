@@ -26,3 +26,7 @@ model Report {
   @@index([status, severityLevel])
   @@index([category])
 }
+
+model AdminUser {
+  email String @id
+}

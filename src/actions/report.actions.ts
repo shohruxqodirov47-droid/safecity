@@ -97,3 +97,39 @@ export async function updateReportStatus(id: string, status: string) {
     return { error: "Statusni o'zgartirishda xatolik yuz berdi." };
   }
 }
+
+export async function checkIsAdmin(email: string) {
+  if (!email) return false;
+  try {
+    const admin = await prisma.adminUser.findUnique({ where: { email } });
+    return !!admin;
+  } catch {
+    return false;
+  }
+}
+
+export async function makeAdmin(email: string) {
+  if (!email) return { error: "Email topilmadi" };
+  try {
+    await prisma.adminUser.upsert({
+      where: { email },
+      update: {},
+      create: { email }
+    });
+    return { success: true };
+  } catch {
+    return { error: "Admin qilishda xatolik yuz berdi" };
+  }
+}
+
+export async function deleteReport(id: string) {
+  try {
+    await prisma.report.delete({ where: { id } });
+    revalidatePath("/");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete report:", error);
+    return { error: "Hodisani o'chirishda xatolik yuz berdi." };
+  }
+}

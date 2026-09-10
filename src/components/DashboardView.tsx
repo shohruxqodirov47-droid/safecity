@@ -1,12 +1,11 @@
 "use client";
-
 import { useState, useTransition, useEffect } from "react";
 import dynamic from "next/dynamic";
 import ReportForm from "@/components/ReportForm";
-import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon, Filter } from "lucide-react";
+import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon, Filter, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { upvoteReport } from "@/actions/report.actions";
+import { upvoteReport, checkIsAdmin, deleteReport } from "@/actions/report.actions";
 import { auth, signOut } from "@/lib/firebase";
 
 const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
@@ -113,6 +112,29 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
   const [focusLocation, setFocusLocation] = useState<[number, number] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isDeleting, startDeleting] = useTransition();
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("safecity_user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.email) {
+          checkIsAdmin(user.email).then(res => setIsAdmin(res));
+        }
+      } catch (e) {}
+    }
+  }, []);
+
+  const handleDelete = (id: string) => {
+    if (confirm("Bu hodisani o'chirmoqchimisiz?")) {
+      startDeleting(async () => {
+        await deleteReport(id);
+        if (onRefresh) onRefresh();
+      });
+    }
+  };
 
   const filteredReports = activeFilter === "ALL" 
     ? initialReports 
@@ -303,14 +325,26 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                         {/* Title + Severity */}
                         <div className="flex justify-between items-start mb-1.5 pl-2">
                           <h4 className="font-bold text-slate-900 text-sm leading-tight pr-2 group-hover:text-yellow-600 transition-colors">{report.title}</h4>
-                          <span className={cn("text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 border",
-                            report.severityLevel === 'CRITICAL' ? 'bg-red-500 text-white border-red-600 shadow-sm' :
-                            report.severityLevel === 'HIGH' ? 'bg-orange-500 text-white border-orange-600 shadow-sm' :
-                            report.severityLevel === 'MEDIUM' ? 'bg-yellow-400 text-black border-yellow-500 shadow-sm' :
-                            'bg-slate-500 text-white border-slate-600 shadow-sm'
-                          )}>
-                            {report.severityLevel}
-                          </span>
+                          <div className="flex gap-2 items-center">
+                            {isAdmin && (
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); handleDelete(report.id); }}
+                                disabled={isDeleting}
+                                className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg border border-transparent hover:border-red-200 transition-colors"
+                                title="Hodisani o'chirish"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
+                            <span className={cn("text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 border",
+                              report.severityLevel === 'CRITICAL' ? 'bg-red-500 text-white border-red-600 shadow-sm' :
+                              report.severityLevel === 'HIGH' ? 'bg-orange-500 text-white border-orange-600 shadow-sm' :
+                              report.severityLevel === 'MEDIUM' ? 'bg-yellow-400 text-black border-yellow-500 shadow-sm' :
+                              'bg-slate-500 text-white border-slate-600 shadow-sm'
+                            )}>
+                              {report.severityLevel}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Category + Status badges */}
