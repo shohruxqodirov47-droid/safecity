@@ -58,11 +58,32 @@ export async function getReports() {
   try {
     return await prisma.report.findMany({
       orderBy: { createdAt: 'desc' },
-      take: 100
+      take: 100,
+      include: { 
+        comments: { orderBy: { createdAt: 'asc' } } 
+      }
     });
   } catch (error) {
     console.error("Failed to get reports:", error);
     return [];
+  }
+}
+
+export async function addComment(reportId: string, text: string, author: string) {
+  if (!text || text.trim().length === 0) return { error: "Izoh bo'sh bo'lishi mumkin emas" };
+  try {
+    await prisma.comment.create({
+      data: {
+        text: text.trim(),
+        author: author || "Foydalanuvchi",
+        reportId
+      }
+    });
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to add comment:", error);
+    return { error: "Izoh qo'shishda xatolik yuz berdi" };
   }
 }
 

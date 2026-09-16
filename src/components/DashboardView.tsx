@@ -3,10 +3,10 @@ import { useState, useTransition, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import ReportForm from "@/components/ReportForm";
-import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon, Filter, Trash2 } from "lucide-react";
+import { ShieldAlert, Activity, Crosshair, BarChart3, ThumbsUp, TrendingUp, Zap, Map as MapIcon, X, Menu, Send, LogOut, User as UserIcon, Filter, Trash2, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { upvoteReport, checkIsAdmin, deleteReport } from "@/actions/report.actions";
+import { upvoteReport, checkIsAdmin, deleteReport, addComment } from "@/actions/report.actions";
 import { auth, signOut } from "@/lib/firebase";
 
 const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
@@ -117,6 +117,9 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDeleting, startDeleting] = useTransition();
   const [secretClicks, setSecretClicks] = useState(0);
+  const [expandedComments, setExpandedComments] = useState<string | null>(null);
+  const [commentText, setCommentText] = useState("");
+  const [isCommenting, startCommenting] = useTransition();
 
   const handleSecretClick = () => {
     if (secretClicks + 1 >= 2) {
@@ -146,6 +149,18 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
         if (onRefresh) onRefresh();
       });
     }
+  };
+
+  const handleCommentSubmit = (e: React.FormEvent, reportId: string) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    startCommenting(async () => {
+      const userStr = localStorage.getItem("safecity_user");
+      const author = userStr ? JSON.parse(userStr).name : "Foydalanuvchi";
+      await addComment(reportId, commentText, author);
+      setCommentText("");
+      if (onRefresh) onRefresh();
+    });
   };
 
   const filteredReports = activeFilter === "ALL" 
@@ -381,6 +396,12 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                             {new Date(report.createdAt).toLocaleDateString("uz-UZ")}
                           </span>
                           <div className="flex gap-2">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setExpandedComments(expandedComments === report.id ? null : report.id); }}
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300 bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200 active:scale-95"
+                            >
+                              <MessageSquare size={12} /> {report.comments?.length || 0} Izoh
+                            </button>
                             <a
                               href={`https://t.me/share/url?url=https://safecityuz.vercel.app&text=Diqqat! ${encodeURIComponent(report.title)} - SafeCity tizimiga xabar berildi.`}
                               target="_blank"
@@ -395,6 +416,42 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                             </div>
                           </div>
                         </div>
+
+                        {/* Expanded Comments Section */}
+                        {expandedComments === report.id && (
+                          <div className="mt-3 pt-3 border-t border-slate-100" onClick={(e) => e.stopPropagation()}>
+                            <div className="space-y-2 mb-3 max-h-40 overflow-y-auto custom-scrollbar pr-1">
+                              {!report.comments || report.comments.length === 0 ? (
+                                <p className="text-[10px] text-center text-slate-400 font-medium py-2">Hali izohlar yo'q. Birinchi bo'lib fikr bildiring!</p>
+                              ) : (
+                                report.comments.map((c: any) => (
+                                  <div key={c.id} className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                    <div className="flex justify-between items-center mb-1">
+                                      <span className="font-bold text-[10px] text-slate-700">{c.author}</span>
+                                      <span className="text-[8px] font-bold text-slate-400">{new Date(c.createdAt).toLocaleDateString("uz-UZ")}</span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-600 font-medium leading-tight">{c.text}</p>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                            <form onSubmit={(e) => handleCommentSubmit(e, report.id)} className="flex gap-2">
+                              <input 
+                                value={commentText} 
+                                onChange={e => setCommentText(e.target.value)} 
+                                placeholder="Fikringizni yozing..." 
+                                className="flex-1 text-xs font-medium px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 transition-all"
+                              />
+                              <button 
+                                disabled={isCommenting || !commentText.trim()} 
+                                type="submit" 
+                                className="bg-yellow-400 text-black px-4 py-2 rounded-xl text-xs font-black hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                              >
+                                {isCommenting ? "..." : "Yuborish"}
+                              </button>
+                            </form>
+                          </div>
+                        )}
                       </motion.div>
                       );
                     })}
