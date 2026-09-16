@@ -19,6 +19,7 @@ model Report {
   severityLevel String   // "CRITICAL", "HIGH", "MEDIUM", "LOW"
   status        String   @default("PENDING") // "PENDING", "IN_PROGRESS", "RESOLVED"
   upvotes       Int      @default(0)
+  upvotedBy     String[] @default([])
   imageUrl      String?  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

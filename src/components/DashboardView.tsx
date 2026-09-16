@@ -26,16 +26,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; dot: string }> 
   RESOLVED: { label: "Hal qilindi ✓", color: "text-green-600", dot: "bg-green-500" },
 };
 
-function UserProfileWidget() {
-  const [user, setUser] = useState<{name: string, email?: string, phone?: string, photo: string | null} | null>(null);
-
-  useEffect(() => {
-    const userStr = localStorage.getItem("safecity_user");
-    if (userStr) {
-      try { setUser(JSON.parse(userStr)); } catch (e) {}
-    }
-  }, []);
-
+function UserProfileWidget({ user }: { user: any }) {
   if (!user) return null;
 
   return (
@@ -66,21 +57,30 @@ function UserProfileWidget() {
   );
 }
 
-function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVotes: number }) {
+function UpvoteButton({ reportId, initialVotes, upvotedBy, userEmail }: { reportId: string; initialVotes: number; upvotedBy: string[]; userEmail?: string }) {
   const [isPending, startTransition] = useTransition();
+  const hasVoted = userEmail ? upvotedBy.includes(userEmail) : false;
   const [votes, setVotes] = useState(initialVotes || 0);
-  const [voted, setVoted] = useState(false);
+  const [voted, setVoted] = useState(hasVoted);
 
-  useEffect(() => { setVotes(initialVotes || 0); }, [initialVotes]);
+  useEffect(() => { 
+    setVotes(initialVotes || 0); 
+    setVoted(userEmail ? upvotedBy.includes(userEmail) : false);
+  }, [initialVotes, upvotedBy, userEmail]);
 
   const handleVote = () => {
+    if (!userEmail) {
+      alert("Ovoz berish uchun tizimga kiring!");
+      return;
+    }
     if (voted) return;
+    
     setVotes((v) => v + 1);
     setVoted(true);
     startTransition(async () => {
       try {
-        const res = await upvoteReport(reportId);
-        if (res.error) {
+        const res = await upvoteReport(reportId, userEmail);
+        if (res?.error) {
           setVotes(v => v - 1);
           setVoted(false);
         }
@@ -98,7 +98,7 @@ function UpvoteButton({ reportId, initialVotes }: { reportId: string; initialVot
       className={cn(
         "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300",
         voted
-          ? "bg-yellow-400 text-black border border-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.4)]"
+          ? "bg-yellow-400 text-black border border-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.4)] cursor-default"
           : "bg-slate-100 text-slate-500 border border-slate-200 hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200 active:scale-95"
       )}
     >
@@ -115,6 +115,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isDeleting, startDeleting] = useTransition();
   const [secretClicks, setSecretClicks] = useState(0);
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
@@ -135,6 +136,7 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
+        setCurrentUser(user);
         if (user.email) {
           checkIsAdmin(user.email).then(res => setIsAdmin(res));
         }
@@ -412,7 +414,12 @@ export default function DashboardView({ initialReports, onRefresh }: { initialRe
                               <Send size={12} className="mr-0.5" /> Ulashish
                             </a>
                             <div onClick={(e) => e.stopPropagation()}>
-                              <UpvoteButton reportId={report.id} initialVotes={report.upvotes} />
+                              <UpvoteButton 
+                                reportId={report.id} 
+                                initialVotes={report.upvotes} 
+                                upvotedBy={report.upvotedBy || []} 
+                                userEmail={currentUser?.email || currentUser?.phone || ""} 
+                              />
                             </div>
                           </div>
                         </div>

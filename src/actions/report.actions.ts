@@ -87,20 +87,30 @@ export async function addComment(reportId: string, text: string, author: string)
   }
 }
 
-export async function upvoteReport(id: string) {
-  if (!id || typeof id !== "string") {
-    return { error: "Noto'g'ri ID" };
+export async function upvoteReport(id: string, email: string) {
+  if (!id || !email) {
+    return { error: "Ovoz berish uchun tizimga kirish talab etiladi" };
   }
   try {
+    const report = await prisma.report.findUnique({ where: { id } });
+    if (!report) return { error: "Topilmadi" };
+
+    if (report.upvotedBy.includes(email)) {
+      return { error: "Siz allaqachon ovoz bergansiz" };
+    }
+
     await prisma.report.update({
       where: { id },
-      data: { upvotes: { increment: 1 } }
+      data: { 
+        upvotes: { increment: 1 },
+        upvotedBy: { push: email }
+      }
     });
     revalidatePath("/");
     return { success: true };
   } catch (error) {
     console.error("Failed to upvote:", error);
-    return { error: "Ovoz berishda xatolik yuz berdi. Iltimos qayta urinib ko'ring." };
+    return { error: "Ovoz berishda xatolik yuz berdi" };
   }
 }
 
