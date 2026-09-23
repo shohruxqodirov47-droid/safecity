@@ -271,9 +271,20 @@ export default function AdminClient({ initialReports }: { initialReports: any[] 
                         <option value="IN_PROGRESS">Jarayonda (Ishlanmoqda)</option>
                         <option value="RESOLVED">✓ Hal qilindi</option>
                       </select>
-                      <div className="mt-2">
-                        <a href={`/?lat=${report.latitude}&lng=${report.longitude}`} target="_blank" className="text-[10px] text-blue-500 font-bold hover:underline">
-                          Xaritada ko'rish ↗
+                      <div className="mt-3 flex flex-col gap-1.5">
+                        <a 
+                          href={`https://yandex.uz/maps/?rtext=~${report.latitude},${report.longitude}`} 
+                          target="_blank" 
+                          className="flex items-center justify-center gap-1 bg-yellow-400 text-black px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-yellow-300 transition-colors shadow-sm"
+                        >
+                          🚕 Yandex orqali borish
+                        </a>
+                        <a 
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${report.latitude},${report.longitude}`} 
+                          target="_blank" 
+                          className="flex items-center justify-center gap-1 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-blue-100 transition-colors border border-blue-200"
+                        >
+                          🗺️ Google Maps marshruti
                         </a>
                       </div>
                     </td>
